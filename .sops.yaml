@@ -1,0 +1,14 @@
+---
+keys:
+  - &user_aka-raccoon age1qr30xfa47s84mcdcsp0h69x7ryflckmc20reyezc9wfysleeydvqc2v2y3
+  - &host_asc age1vx9xymjgckm2rvzmkdpd6lm2dchm2lytcfguc0de82flmv8323hsgdw9pv
+
+creation_rules:
+  - path_regex: .*\.sops\.ya?ml$
+    key_groups:
+      - age:
+          - *user_aka-raccoon
+          - *host_asc
+stores:
+  yaml:
+    indent: 2
