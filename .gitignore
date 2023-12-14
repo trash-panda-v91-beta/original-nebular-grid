@@ -1,2 +1,3 @@
 age.key
 kubeconfig
+infra/qsb/k8s/talos/clusterconfig/*
