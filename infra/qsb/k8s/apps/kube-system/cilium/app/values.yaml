@@ -1,6 +1,6 @@
 ---
 cluster:
-  name: qsb
+  name: main
   id: 1
 
 cni:
@@ -40,10 +40,10 @@ l7Proxy: true
 enableCnpStatusUpdates: true
 endpointStatus:
   enabled: true
-  status: 'policy'
+  status: "policy"
 
 ipam:
-  mode: 'kubernetes'
+  mode: "kubernetes"
 
 ingressController:
   enabled: false
@@ -54,7 +54,7 @@ operator:
 
 autoDirectNodeRoutes: true
 ipv4NativeRoutingCIDR: 10.244.0.0/16
-tunnel: 'disabled'
+tunnel: "disabled"
 containerRuntime:
   integration: containerd
 
