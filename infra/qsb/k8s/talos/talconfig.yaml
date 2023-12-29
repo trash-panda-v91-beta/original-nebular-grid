@@ -1,61 +1,73 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
 clusterName: ${CLUSTER_NAME}
-endpoint: 'https://${CLUSTER_VIP}:6443'
+endpoint: 'https://${CLUSTER_NAME}.${DOMAIN}:6443'
 
-talosVersion: v1.5.5
-kubernetesVersion: 1.28.4
-
-# Image URL rendered on https://factory.talos.dev
-talosImageURL: factory.talos.dev/installer/22b1d04da881ef7c57edb0f24d1f3ba2c78a8e22cbe3fa9af4f42d487b2863f7
+talosVersion: v1.6.0
+kubernetesVersion: 1.29.0
 
 cniConfig:
   name: none
 
-additionalApiServerCertSans:
-  - ${CLUSTER_VIP}
-
-additionalMachineCertSans:
+additionalApiServerCertSans: &san
   - ${CLUSTER_VIP}
   - ${CLUSTER_NAME}.${DOMAIN}
+  - "127.0.0.1"
+additionalMachineCertSans: *san
 
 nodes:
-  - hostname: delta.${CLUSTER_NAME}.${DOMAIN}
-    ipAddress: 192.168.10.10
+  - hostname: qsb-mu.${DOMAIN}
+    ipAddress: 10.1.1.31
     controlPlane: true
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata3/host2/target2:0:0/2:0:0:0/
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: '1c:69:7a:a6:d3:f2'
+          driver: e1000e
         dhcp: true
-        vip:
-          ip: ${CLUSTER_VIP}
+        vlans:
+          - &vlan40
+            vlanId: 40
+            mtu: 1500
+            dhcp: true
+            dhcpOptions:
+              routeMetric: 4096
 
-  - hostname: enigma.${CLUSTER_NAME}.${DOMAIN}
-    ipAddress: 192.168.10.11
+  - hostname: qsb-nu.${DOMAIN}
+    ipAddress: 10.1.1.32
     controlPlane: true
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata1/host0/target0:0:0/0:0:0:0/
     networkInterfaces:
       - deviceSelector:
+          driver: r8169
           hardwareAddr: 'd8:9e:f3:84:82:e7'
         dhcp: true
-        vip:
-          ip: ${CLUSTER_VIP}
+        vlans:
+          - *vlan40
 
-  - hostname: omega.${CLUSTER_NAME}.${DOMAIN}
-    ipAddress: 192.168.10.12
+  - hostname: qsb-xi.${DOMAIN}
+    ipAddress: 10.1.1.33
     controlPlane: true
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata1/host0/target0:0:0/0:0:0:0/
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: 'b8:85:84:9f:dc:1e'
+          hardwareAddr: 'r8169'
         dhcp: true
-        vip:
-          ip: ${CLUSTER_VIP}
+        vlans:
+          - *vlan40
 
 controlPlane:
+  schematic:
+    customization:
+      extraKernelArgs:
+        - net.ifnames=0
+      systemExtensions:
+        officialExtensions:
+          - siderolabs/intel-ucode
+          - siderolabs/i915-ucode
+
   patches:
     # Disable search DOMAIN everywhere
     - |-
@@ -68,7 +80,7 @@ controlPlane:
       machine:
         network:
           nameservers:
-            - 192.168.10.1
+            - 10.5.0.4
 
     # Configure NTP
     - |-
@@ -76,7 +88,7 @@ controlPlane:
         time:
           disabled: false
           servers:
-            - 192.168.10.1
+            - 10.1.1.1
 
     # Enable KubePrism
     - |-
@@ -96,34 +108,34 @@ controlPlane:
                 - ${CLUSTER_NAME}.${DOMAIN}
 
     # Configure pull through cache
-    # - |-
-    #   machine:
-    #     registries:
-    #       mirrors:
-    #         docker.io:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/docker.io
-    #           overridePath: true
-    #         ghcr.io:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/ghcr.io
-    #           overridePath: true
-    #         quay.io:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/quay.io
-    #           overridePath: true
-    #         gcr.io:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/gcr.io
-    #           overridePath: true
-    #         registry.k8s.io:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/registry.k8s.io
-    #           overridePath: true
-    #         public.ecr.aws:
-    #           endpoints:
-    #             - https://zot.${DOMAIN}/v2/public.ecr.aws
-    #           overridePath: true
+    - |-
+      machine:
+        registries:
+          mirrors:
+            docker.io:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/docker.io
+              overridePath: true
+            ghcr.io:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/ghcr.io
+              overridePath: true
+            quay.io:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/quay.io
+              overridePath: true
+            gcr.io:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/gcr.io
+              overridePath: true
+            registry.k8s.io:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/registry.k8s.io
+              overridePath: true
+            public.ecr.aws:
+              endpoints:
+                - https://zot.${DOMAIN}/v2/public.ecr.aws
+              overridePath: true
 
     # Cluster configuration
     - |-
@@ -137,7 +149,7 @@ controlPlane:
       cluster:
         etcd:
           advertisedSubnets:
-            - 192.168.10.0/24
+            - 10.1.1.0/24
 
     # Configure containerd
     - |-
@@ -178,13 +190,13 @@ controlPlane:
       machine:
         kubelet:
           extraArgs:
-            feature-gates: CronJobTimeZone=true,GracefulNodeShutdown=true,NewVolumeManagerReconstruction=false
+            feature-gates: GracefulNodeShutdown=true,NewVolumeManagerReconstruction=false
             rotate-server-certificates: "true"
           extraConfig:
             maxPods: 150
           nodeIP:
             validSubnets:
-                - 192.168.10.0/24
+                - 10.1.1.0/24
 
     # Custom sysctls
     - |-

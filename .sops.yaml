@@ -9,6 +9,10 @@ creation_rules:
       - age:
           - *user_aka-raccoon
           - *host_asc
+  - path_regex: .*\.sops\.env$
+    key_groups:
+      - age:
+          - *user_aka-raccoon
 stores:
   yaml:
     indent: 2
