@@ -5,7 +5,28 @@
     "dedupe": true,
     "gc": true,
     "gcDelay": "1h",
-    "gcInterval": "24h"
+    "gcInterval": "24h",
+    "retention": {
+      "dryRun": false,
+      "delay": "24h",
+      "policies": [
+        {
+          "repositories": [
+            "**"
+          ],
+          "deleteReferrers": true,
+          "deleteUntagged": true,
+          "keepTags": [
+            {
+              "mostRecentlyPushedCount": 5,
+              "mostRecentlyPulledCount": 5,
+              "pulledWithin": "720h",
+              "pushedWithin": "720h"
+            }
+          ]
+        }
+      ]
+    }
   },
   "http": {
     "address": "0.0.0.0",
@@ -15,21 +36,23 @@
     "level": "info"
   },
   "extensions": {
+    "ui": {
+      "enable": true
+    },
     "search": {
-      "enable": true,
-      "cve": {
-        "updateInterval": "2h"
-      }
+      "enable": true
     },
     "scrub": {
-      "enable": true,
+      "enable": false,
       "interval": "24h"
     },
     "sync": {
       "enable": true,
       "registries": [
         {
-          "urls": ["https://index.docker.io"],
+          "urls": [
+            "https://index.docker.io"
+          ],
           "content": [
             {
               "prefix": "**",
@@ -40,7 +63,9 @@
           "tlsVerify": true
         },
         {
-          "urls": ["https://gcr.io"],
+          "urls": [
+            "https://gcr.io"
+          ],
           "content": [
             {
               "prefix": "**",
@@ -51,7 +76,9 @@
           "tlsVerify": true
         },
         {
-          "urls": ["https://ghcr.io"],
+          "urls": [
+            "https://ghcr.io"
+          ],
           "content": [
             {
               "prefix": "**",
@@ -62,7 +89,9 @@
           "tlsVerify": true
         },
         {
-          "urls": ["https://quay.io"],
+          "urls": [
+            "https://quay.io"
+          ],
           "content": [
             {
               "prefix": "**",
@@ -73,7 +102,9 @@
           "tlsVerify": true
         },
         {
-          "urls": ["https://registry.k8s.io"],
+          "urls": [
+            "https://registry.k8s.io"
+          ],
           "content": [
             {
               "prefix": "**",
@@ -84,7 +115,9 @@
           "tlsVerify": true
         },
         {
-          "urls": ["https://public.ecr.aws"],
+          "urls": [
+            "https://public.ecr.aws"
+          ],
           "content": [
             {
               "prefix": "**",
