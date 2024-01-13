@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta1.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta1
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: rook-ceph-cluster
@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: rook-ceph-cluster
-      version: v1.12.9
+      version: v1.13.2
       sourceRef:
         kind: HelmRepository
         name: rook-ceph
@@ -88,16 +88,15 @@ spec:
         config:
           osdsPerDevice: "1"
         nodes:
-          - name: "delta"
+          - name: "mu"
             devices:
               - name: "/dev/nvme0n1"
-          - name: "enigma"
+          - name: "nu"
             devices:
               - name: "/dev/nvme0n1"
-          - name: "omega"
+          - name: "xi"
             devices:
               - name: "/dev/nvme0n1"
-
     ingress:
       dashboard:
         ingressClassName: "internal-nginx"
