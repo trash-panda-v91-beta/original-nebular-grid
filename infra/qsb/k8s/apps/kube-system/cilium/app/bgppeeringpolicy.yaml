@@ -6,11 +6,11 @@ kind: CiliumBGPPeeringPolicy
 # "CiliumBGPPeeringPolicy" Custom Resource will replace the old MetalLB BGP's "bgp-config" ConfigMap
 # "CiliumBGPPeeringPolicy" is used with `bgpControlPlane.enabled: true` which uses GoBGP, NOT the old `bgp.enabled: true` which uses MetalLB
 metadata:
-  name: bgp-loadbalancer-ip-qsb
+  name: bgp-loadbalancer-ip-main
 spec:
   nodeSelector:
     matchLabels:
-      kubernetes.io/os: 'linux' # match all Linux nodes, change this to match more granularly if more than 1 PeeringPolicy is to be used throughout cluster
+      kubernetes.io/os: "linux" # match all Linux nodes, change this to match more granularly if more than 1 PeeringPolicy is to be used throughout cluster
   virtualRouters:
     - localASN: 64512
       exportPodCIDR: false
@@ -19,17 +19,17 @@ spec:
           - {
               key: thisFakeSelector,
               operator: NotIn,
-              values: ['will-match-and-announce-all-services'],
+              values: ["will-match-and-announce-all-services"],
             }
       neighbors:
-        - peerAddress: '10.1.1.1/32' # unlike bgp-config ConfigMap, peerAddress needs to be in CIDR notation
+        - peerAddress: "10.1.1.1/32" # unlike bgp-config ConfigMap, peerAddress needs to be in CIDR notation
           peerASN: 64512
 
 ---
-apiVersion: 'cilium.io/v2alpha1'
+apiVersion: "cilium.io/v2alpha1"
 kind: CiliumLoadBalancerIPPool
 metadata:
-  name: qsb-pool
+  name: main-pool
 spec:
   cidrs:
     - cidr: 10.45.0.1/24
