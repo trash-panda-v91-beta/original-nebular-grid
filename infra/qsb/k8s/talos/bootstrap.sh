@@ -63,6 +63,4 @@ if [[ "$ACTION" == "kustomize" ]]; then
   kustomize build --enable-helm "${KCA}" | kubectl apply -f -
   rm "${KCA_VALUES}"
   rm -rf "${KCA_CHARTS}"
-
-  rm -rf "$CLUSTERCONFIG_DIR"
 fi

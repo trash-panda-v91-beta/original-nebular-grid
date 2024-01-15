@@ -41,7 +41,6 @@ nodes:
     networkInterfaces:
       - deviceSelector:
           driver: r8169
-          hardwareAddr: 'd8:9e:f3:84:82:e7'
         dhcp: true
         vlans:
           - *vlan40
@@ -53,7 +52,7 @@ nodes:
       busPath: /pci0000:00/0000:00:17.0/ata1/host0/target0:0:0/0:0:0:0/
     networkInterfaces:
       - deviceSelector:
-          hardwareAddr: 'r8169'
+          driver: 'r8169'
         dhcp: true
         vlans:
           - *vlan40
@@ -106,36 +105,6 @@ controlPlane:
             - ip: ${CLUSTER_VIP}
               aliases:
                 - ${CLUSTER_NAME}.${DOMAIN}
-
-    # Configure pull through cache
-    - |-
-      machine:
-        registries:
-          mirrors:
-            docker.io:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/docker.io
-              overridePath: true
-            ghcr.io:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/ghcr.io
-              overridePath: true
-            quay.io:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/quay.io
-              overridePath: true
-            gcr.io:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/gcr.io
-              overridePath: true
-            registry.k8s.io:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/registry.k8s.io
-              overridePath: true
-            public.ecr.aws:
-              endpoints:
-                - https://zot.${DOMAIN}/v2/public.ecr.aws
-              overridePath: true
 
     # Cluster configuration
     - |-
