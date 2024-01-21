@@ -1,0 +1,126 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: sabnzbd
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+          secret.reloader.stakater.com/reload: qbittorrent-secret
+
+        pod:
+          securityContext:
+            runAsUser: ${APP_UID}
+            runAsGroup: ${APP_GID}
+            runAsNonRoot: true
+            fsGroup: ${APP_GID}
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups:
+              - 65542 # gladius:external-services
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/onedr0p/sabnzbd
+              tag: 4.2.1@sha256:c9f2577a9483ed1a53295ed6315f4ebfcf9e99507c1095f49b5bc2f0cf080179
+            env:
+              SABNZBD__PORT: &port 8080
+              SABNZBD__HOST_WHITELIST_ENTRIES: >-
+                sabnzbd,
+                sabnzbd.downloads,
+                sabnzbd.downloads.svc,
+                sabnzbd.downloads.svc.cluster,
+                sabnzbd.downloads.svc.cluster.local,
+                ${HOSTNAME}
+              SABNZBD__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sabnzbd-secret
+                    key: api_key
+              SABNZBD__NZB_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sabnzbd-secret
+                    key: nzb_key
+            resources:
+              requests:
+                cpu: 5m
+                memory: 1024Mi
+              limits:
+                memory: 6144Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: latest@sha256:450a487b23cd460da99b025b32b22fbccd41e7f3a0b083d34326d5a4c88519b0
+            env:
+              VPN_SERVICE_PROVIDER: privado
+              VPN_ENDPOINT_PORT: 51820
+              FIREWALL_INPUT_PORTS: *port
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+              SERVER_CITIES: Amsterdam,Prague
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-vpn-secret
+            securityContext:
+              capabilities:
+                add:
+                  - NET_ADMIN
+              allowPrivilegeEscalation: false
+
+    service:
+      main:
+        ports:
+          http:
+            port: *port
+
+    ingress:
+      main:
+        enabled: true
+        className: "internal-nginx"
+        hosts:
+          - host: "${HOSTNAME}"
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - "${HOSTNAME}"
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: "${VOLSYNC_CLAIM}"
+        advancedMounts:
+          main:
+            main:
+              - path: /config
+      media:
+        type: nfs
+        server: asc.${DOMAIN}
+        path: /tank/media
+        globalMounts:
+          - path: /data/nas-media

@@ -5,6 +5,7 @@ keys:
 
 creation_rules:
   - path_regex: .*\.sops\.ya?ml$
+    encrypted_regex: "^(data|stringData)$"
     key_groups:
       - age:
           - *user_aka-raccoon
