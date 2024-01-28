@@ -6,9 +6,5 @@ resources:
   - ./helmrelease.yaml
   - ./networkpolicy.yaml
   - ../../../../templates/volsync
-configMapGenerator:
-  - name: qbittorrent-scripts
-    files:
-      - ./scripts/completed.sh
 generatorOptions:
   disableNameSuffixHash: true
