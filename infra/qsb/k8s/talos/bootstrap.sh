@@ -35,7 +35,7 @@ if [[ "$ACTION" == "apply" ]]; then
     HOSTNAME=$(yq e '.hostname' <<<"$action" | cut -d . -f 1)
     IP_ADDRESS=$(yq e '.ipAddress' <<<"$action")
     echo "Applying config for $HOSTNAME ($IP_ADDRESS)"
-    talosctl apply-config -n "$IP_ADDRESS" -f "$CLUSTERCONFIG_DIR"/*"${HOSTNAME}"*.yaml
+    talosctl apply-config -i -n "$IP_ADDRESS" -f "$CLUSTERCONFIG_DIR"/*"${HOSTNAME}"*.yaml
   done <<EOF
 $NODES
 EOF

@@ -3,8 +3,8 @@
 clusterName: ${CLUSTER_NAME}
 endpoint: 'https://${CLUSTER_NAME}.${DOMAIN}:6443'
 
-talosVersion: v1.6.0
-kubernetesVersion: 1.29.0
+talosVersion: v1.6.3
+kubernetesVersion: 1.29.1
 
 cniConfig:
   name: none
