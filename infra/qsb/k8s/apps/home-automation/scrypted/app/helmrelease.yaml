@@ -107,6 +107,6 @@ spec:
       recs:
         type: nfs
         server: asc.${DOMAIN}
-        path: /tank/Apps/scrypted
+        path: /tank/apps/scrypted
         globalMounts:
           - path: /recs
