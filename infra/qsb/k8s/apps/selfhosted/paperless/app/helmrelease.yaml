@@ -126,6 +126,6 @@ spec:
       nas:
         type: nfs
         server: asc.${DOMAIN}
-        path: /tank/Apps/paperless
+        path: /tank/apps/paperless
         globalMounts:
           - path: /data/nas
