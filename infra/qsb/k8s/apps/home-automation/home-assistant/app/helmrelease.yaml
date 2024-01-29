@@ -76,7 +76,7 @@ spec:
                 service:
                   name: main
                   port: http
-          - host: hass.${DOMAIN}
+          - host: home.${DOMAIN}
             paths:
               - path: /
                 service:
@@ -85,7 +85,7 @@ spec:
         tls:
           - hosts:
               - "${HOSTNAME}"
-              - hass.${DOMAIN}
+              - home.${DOMAIN}
 
     persistence:
       config:
