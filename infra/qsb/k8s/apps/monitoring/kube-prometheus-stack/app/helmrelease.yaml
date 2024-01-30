@@ -11,7 +11,7 @@ spec:
   chart:
     spec:
       chart: kube-prometheus-stack
-      version: 55.8.1
+      version: 56.3.0
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
@@ -153,9 +153,9 @@ spec:
         resources:
           requests:
             cpu: 257m
-            memory: 3760M
+            memory: 3000M
           limits:
-            memory: 3760M
+            memory: 5000M
         retention: 2d
         retentionSize: "15GB"
         ruleSelectorNilUsesHelmValues: false
@@ -170,13 +170,13 @@ spec:
                 requests:
                   storage: 20Gi
         thanos:
-          image: quay.io/thanos/thanos:v0.33.0
+          image: quay.io/thanos/thanos:v0.34.0
           objectStorageConfig:
             existingSecret:
               name: kube-prometheus-stack-secret
               key: objstore.yml
-          # renovate: datasource=docker depName=quay.io/thanos/thanos
-          version: "0.33.0"
+          # renovate: depName=quay.io/thanos/thanos datasource=docker
+          version: "0.34.0"
         walCompression: true
 
       thanosService:
@@ -199,4 +199,4 @@ spec:
                 name: not-used
                 namespace: not-used
                 annotations:
-                  grafana_folder: Kubernetes
+                  grafana_folder: Kubernetes--
