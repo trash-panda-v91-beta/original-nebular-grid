@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: loki
-      version: 5.41.6
+      version: 5.41.8
       sourceRef:
         kind: HelmRepository
         name: grafana
@@ -38,13 +38,20 @@ spec:
           reject_old_samples: true
           reject_old_samples_max_age: 168h
           max_cache_freshness_per_query: 10m
-          split_queries_by_interval: 15m
+          split_queries_by_interval: 1h
+          max_query_parallelism: 100
           per_stream_rate_limit: 64M
           per_stream_rate_limit_burst: 128M
           ingestion_rate_mb: 64
           ingestion_burst_size_mb: 128
           shard_streams:
             enabled: true
+
+        query_scheduler:
+          max_outstanding_requests_per_tenant: 4096
+
+        frontend:
+          max_outstanding_per_tenant: 4096
 
         schema_config:
           configs:
@@ -130,7 +137,7 @@ spec:
           nginx.ingress.kubernetes.io/whitelist-source-range: |
             10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
         hosts:
-          - host: &host "loki-qsb.${DOMAIN}"
+          - host: &host "loki-main.bjw-s.dev"
             paths:
               - path: /
                 pathType: Prefix
