@@ -12,5 +12,5 @@ resources:
   - ./mealie/ks.yaml
   - ./paperless/ks.yaml
   - ./radicale/ks.yaml
-  - ./wallabag/ks.yaml
-  - ./zipline/ks.yaml
+    #- ./wallabag/ks.yaml
+    # - ./zipline/ks.yaml
