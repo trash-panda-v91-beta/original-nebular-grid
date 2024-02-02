@@ -16,8 +16,8 @@ spec:
             app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
-            - port: "8080"
-              protocol: "TCP"
+            - port: '8080'
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
@@ -25,5 +25,5 @@ spec:
             app.kubernetes.io/instance: nginx-external
       toPorts:
         - ports:
-            - port: "443"
-              protocol: "TCP"
+            - port: '443'
+              protocol: TCP

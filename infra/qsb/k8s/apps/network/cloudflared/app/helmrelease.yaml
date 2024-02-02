@@ -9,26 +9,23 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 2.5.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       main:
         replicas: 2
         strategy: RollingUpdate
-
         annotations:
-          reloader.stakater.com/auto: "true"
-
+          reloader.stakater.com/auto: 'true'
         pod:
           labels:
             egress.home.arpa/internet: allow
-            egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
+            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
           topologySpreadConstraints:
             - maxSkew: 1
               topologyKey: kubernetes.io/hostname
@@ -36,20 +33,19 @@ spec:
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: cloudflared
-
         containers:
           main:
             image:
               repository: docker.io/cloudflare/cloudflared
-              tag: 2024.1.2
+              tag: 2024.1.5
             args:
               - tunnel
               - --config
               - /etc/cloudflared/config/config.yaml
               - run
-              - "$(TUNNEL_ID)"
+              - $(TUNNEL_ID)
             env:
-              NO_AUTOUPDATE: "true"
+              NO_AUTOUPDATE: 'true'
               TUNNEL_CRED_FILE: /etc/cloudflared/creds/credentials.json
               TUNNEL_METRICS: 0.0.0.0:8080
               TUNNEL_TRANSPORT_PROTOCOL: auto
@@ -96,13 +92,11 @@ spec:
                 memory: 105Mi
               limits:
                 memory: 105Mi
-
     service:
       main:
         ports:
           http:
             port: 8080
-
     serviceMonitor:
       main:
         enabled: true
@@ -112,7 +106,6 @@ spec:
             path: /metrics
             interval: 1m
             scrapeTimeout: 30s
-
     persistence:
       config:
         enabled: true
