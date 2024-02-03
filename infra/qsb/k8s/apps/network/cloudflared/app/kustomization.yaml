@@ -8,9 +8,6 @@ resources:
   - ./networkpolicy.yaml
 configMapGenerator:
   - name: cloudflared-configmap
-    files:
-      - config/config.yaml
+    files: [config/config.yaml]
 generatorOptions:
   disableNameSuffixHash: true
-  annotations:
-    kustomize.toolkit.fluxcd.io/substitute: disabled
