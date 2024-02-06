@@ -3,7 +3,6 @@ libraries:
   TV Shows:
     collection_files:
       - file: config/tv_shows.yml
-
 settings:
   cache: true
   cache_expiration: 60
@@ -40,7 +39,6 @@ settings:
   verify_ssl: true
   custom_repo: None
   check_nightly: false
-
 plex:
   url: http://plex.media.svc.cluster.local:32400
   token: <<PLEX_API_KEY>>
@@ -48,19 +46,17 @@ plex:
   clean_bundles: false
   empty_trash: false
   optimize: false
-
 tmdb:
   apikey: <<TMDB_API_KEY>>
   language: en
   cache_expiration: 60
   region:
-
 radarr:
   url: http://radarr.downloads.svc.cluster.local:7878
   token: <<RADARR_API_KEY>>
   add_missing: false
   add_existing: false
-  root_folder_path: /data/nas-media/Library/Main/Movies
+  root_folder_path: /data/nas-media/movies
   monitor: true
   availability: released
   quality_profile: Ultra-HD
@@ -70,13 +66,12 @@ radarr:
   plex_path:
   upgrade_existing: false
   ignore_cache: false
-
 sonarr:
   url: http://sonarr.downloads.svc.cluster.local:8989
   token: <<SONARR_API_KEY>>
   add_missing: false
   add_existing: false
-  root_folder_path: /data/nas-media/Library/Main/Series
+  root_folder_path: /data/nas-media/tv
   monitor: all
   quality_profile: Ultra-HD
   language_profile: English
