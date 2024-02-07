@@ -1,0 +1,91 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: lidarr
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        pod:
+          labels:
+            egress.home.arpa/internet: allow
+            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
+            ingress.home.arpa/nginx-internal: allow
+          securityContext:
+            runAsUser: ${APP_UID}
+            runAsGroup: ${APP_GID}
+            runAsNonRoot: true
+            fsGroup: ${APP_GID}
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups: [65542]
+        containers:
+          main:
+            image:
+              repository: ghcr.io/onedr0p/lidarr-develop
+              tag: 2.1.6@sha256:36b75d721cca61d1a24c3882c253ae14952a6fad45c8e6dede23af79b61096f7
+            env:
+              COMPlus_EnableDiagnostics: '0'
+              LIDARR__INSTANCE_NAME: Lidarr
+              LIDARR__PORT: &port 8686
+              LIDARR__AUTHENTICATION_METHOD: External
+              LIDARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
+              LIDARR__APPLICATION_URL: https://lidarr.${DOMAIN}
+              LIDARR__LOG_LEVEL: info
+              LIDARR__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: lidarr-secret
+                    key: api_key
+            resources:
+              requests:
+                cpu: 14m
+                memory: 431M
+              limits:
+                memory: 431M
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: [ALL]
+    service:
+      main:
+        ports:
+          http:
+            port: *port
+    ingress:
+      main:
+        enabled: true
+        className: internal-nginx
+        hosts:
+          - host: ${HOSTNAME}
+            paths:
+              - path: /
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts: ['${HOSTNAME}']
+    persistence:
+      config:
+        enabled: true
+        existingClaim: ${VOLSYNC_CLAIM}
+      media:
+        type: nfs
+        server: asc.${DOMAIN}
+        path: /tank/media
+        globalMounts:
+          - path: /data/nas-media
