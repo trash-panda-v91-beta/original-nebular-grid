@@ -18,7 +18,7 @@ spec:
         type: kubernetes.io/dockerconfigjson
         data:
           .dockerconfigjson: '{"auths": {"ghcr.io": {"auth": "{{ .token }}"}}}'
-      name: ghcr-secret
+      name: private-ghcr
       creationPolicy: Owner
     data:
       - secretKey: token
