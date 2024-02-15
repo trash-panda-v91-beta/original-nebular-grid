@@ -6,11 +6,11 @@ resources:
   - ./namespace.yaml
   # Flux-Kustomizations
   - ./actual/ks.yaml
-  - ./atuin/ks.yaml
-  - ./libreddit/ks.yaml
-  - ./miniflux/ks.yaml
-  - ./mealie/ks.yaml
+  # - ./atuin/ks.yaml
+  # - ./libreddit/ks.yaml
+  # - ./miniflux/ks.yaml
+  # - ./mealie/ks.yaml
   - ./paperless/ks.yaml
-  - ./radicale/ks.yaml
-    #- ./wallabag/ks.yaml
-    # - ./zipline/ks.yaml
+  # - ./radicale/ks.yaml
+  # - ./wallabag/ks.yaml
+  # - ./zipline/ks.yaml
