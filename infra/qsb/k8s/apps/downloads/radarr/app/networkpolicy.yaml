@@ -24,7 +24,6 @@ spec:
         - ports:
             - port: "7878"
               protocol: TCP
-
   egress:
     # plex
     - toEndpoints:
@@ -35,7 +34,6 @@ spec:
         - ports:
             - port: "32400"
               protocol: TCP
-
     # prowlarr
     - toEndpoints:
         - matchLabels:
@@ -44,7 +42,6 @@ spec:
         - ports:
             - port: "9696"
               protocol: TCP
-
     # qbittorrent
     - toEndpoints:
         - matchLabels:
@@ -53,11 +50,17 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-
     # sabnzbd
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: sabnzbd
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: aria2
       toPorts:
         - ports:
             - port: "8080"

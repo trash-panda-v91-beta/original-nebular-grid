@@ -14,3 +14,4 @@ resources:
   - ./sonarr/ks.yaml
   - ./lidarr/ks.yaml
   - ./freyrarr/ks.yaml
+  - ./aria2/ks.yaml

@@ -1,0 +1,13 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ./helmrelease.yaml
+  - ./externalsecret.yaml
+  - ./networkpolicy.yaml
+  - ../../../../templates/volsync
+configMapGenerator:
+  - name: aria2-configmap
+    files: [config/aria2.conf]
+generatorOptions:
+  disableNameSuffixHash: true
