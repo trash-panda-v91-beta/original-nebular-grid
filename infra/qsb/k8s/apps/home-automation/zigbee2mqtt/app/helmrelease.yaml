@@ -15,24 +15,21 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           labels:
             ingress.home.arpa/nginx-internal: allow
             egress.home.arpa/world: allow
-            egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
+            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
           securityContext:
             runAsUser: ${APP_UID}
             runAsGroup: ${APP_GID}
             fsGroup: ${APP_GID}
             fsGroupChangePolicy: OnRootMismatch
-
         containers:
           main:
             image:
@@ -64,6 +61,7 @@ spec:
               ZIGBEE2MQTT_CONFIG_DEVICE_OPTIONS_LEGACY: "false"
               ZIGBEE2MQTT_CONFIG_DEVICE_OPTIONS_RETAIN: "true"
               ZIGBEE2MQTT_CONFIG_EXPERIMENTAL_NEW_API: "true"
+              ZIGBEE2MQTT_CONFIG_FRONTEND: false
               ZIGBEE2MQTT_CONFIG_FRONTEND_PORT: 8080
               ZIGBEE2MQTT_CONFIG_FRONTEND_URL: https://${HOSTNAME}
               ZIGBEE2MQTT_CONFIG_HOMEASSISTANT: "true"
@@ -92,7 +90,6 @@ spec:
                 memory: 212M
               limits:
                 memory: 256M
-
     service:
       main:
         ports:
@@ -101,7 +98,6 @@ spec:
           metrics:
             enabled: true
             port: 9000
-
     ingress:
       main:
         enabled: true
@@ -116,7 +112,6 @@ spec:
         tls:
           - hosts:
               - "${HOSTNAME}"
-
     persistence:
       data:
         existingClaim: "${VOLSYNC_CLAIM}"
