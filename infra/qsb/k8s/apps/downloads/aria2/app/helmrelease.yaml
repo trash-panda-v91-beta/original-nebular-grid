@@ -40,6 +40,18 @@ spec:
                   secretKeyRef:
                     name: aria2-secret
                     key: rpc_secret
+              SONARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: aria2-secret
+                    key: sonarr_api_key
+              SONARR_URL: http://10.99.179.154:8989
+              RADARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: aria2-secret
+                    key: radarr_api_key
+              RADARR_URL: http://10.103.3.69:7878
             resources:
               requests:
                 cpu: 5m
@@ -57,8 +69,9 @@ spec:
           gluetun:
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: latest@sha256:450a487b23cd460da99b025b32b22fbccd41e7f3a0b083d34326d5a4c88519b0
+              tag: v3.37.0
             env:
+              DNS_KEEP_NAMESERVER: false
               VPN_SERVICE_PROVIDER: privado
               FIREWALL_INPUT_PORTS: 8080
               FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
@@ -109,4 +122,13 @@ spec:
         globalMounts:
           - path: /config/aria2.conf
             subPath: aria2.conf
+            readOnly: true
+      informarr:
+        enabled: true
+        type: configMap
+        name: aria2-informarr
+        defaultMode: 0775
+        globalMounts:
+          - path: /config/informarr.sh
+            subPath: informarr.sh
             readOnly: true

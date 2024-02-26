@@ -11,6 +11,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
+            app.kubernetes.io/name: aria2
+        - matchLabels:
             app.kubernetes.io/name: prowlarr
         - matchLabels:
             app.kubernetes.io/name: recyclarr
@@ -25,7 +27,6 @@ spec:
             - port: "7878"
               protocol: TCP
   egress:
-    # plex
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: plex
@@ -34,7 +35,6 @@ spec:
         - ports:
             - port: "32400"
               protocol: TCP
-    # prowlarr
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: prowlarr
@@ -42,7 +42,6 @@ spec:
         - ports:
             - port: "9696"
               protocol: TCP
-    # qbittorrent
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: qbittorrent
@@ -50,7 +49,6 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
-    # sabnzbd
     - toEndpoints:
         - matchLabels:
             app.kubernetes.io/name: sabnzbd

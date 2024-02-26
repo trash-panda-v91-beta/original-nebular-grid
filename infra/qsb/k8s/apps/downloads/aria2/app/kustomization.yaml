@@ -8,6 +8,10 @@ resources:
   - ../../../../templates/volsync
 configMapGenerator:
   - name: aria2-configmap
-    files: [config/aria2.conf]
+    files: [config/aria2.conf, config/informarr.sh]
+  - name: aria2-informarr
+    files: [config/informarr.sh]
 generatorOptions:
   disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
