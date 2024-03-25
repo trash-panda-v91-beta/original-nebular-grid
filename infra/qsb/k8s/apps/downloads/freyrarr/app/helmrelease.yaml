@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: ghcr.io/aka-raccoon/freyrarr
-              tag: 0.0.2@sha256:80cc0aa2e55facd94ef4bf8ff2474d454f591457da2501a3383f34742ff4b5ac
+              tag: 0.0.3@sha256:952eb224abfa46f0f4cda74700bc5f151e26ff79ba69c4aed59ed6f2174d125f
             env:
               DATA_DIR: /data/nas-media/downloads/freyrarr
               LIDARR_URL: http://lidarr.downloads.svc.cluster.local
