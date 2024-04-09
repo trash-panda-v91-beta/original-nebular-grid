@@ -17,6 +17,8 @@ spec:
         - matchLabels:
             app.kubernetes.io/name: recyclarr
         - matchLabels:
+            app.kubernetes.io/name: sccarr
+        - matchLabels:
             app.kubernetes.io/name: maintainerr
             io.kubernetes.pod.namespace: media
         - matchLabels:

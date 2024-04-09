@@ -36,6 +36,13 @@ spec:
       ports:
         - port: *port
           protocol: TCP
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: sccarr
+      ports:
+        - port: *port
+          protocol: TCP
   egress:
     - to:
         - namespaceSelector:

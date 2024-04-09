@@ -1,0 +1,110 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: sccarr
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  values:
+    controllers:
+      main:
+        type: cronjob
+        annotations:
+          reloader.stakater.com/auto: 'true'
+        cronjob:
+          schedule: 5 * * * *
+        pod:
+          # enableServiceLinks: false
+          imagePullSecrets:
+            - name: private-ghcr
+          labels:
+            egress.home.arpa/internet: allow
+            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
+          securityContext:
+            runAsUser: ${APP_UID}
+            runAsGroup: ${APP_GID}
+            runAsNonRoot: true
+            fsGroup: ${APP_GID}
+            fsGroupChangePolicy: OnRootMismatch
+            supplementalGroups: [65542]
+        containers:
+          main:
+            image:
+              repository: ghcr.io/aka-raccoon/sccarr
+              tag: 0.0.1@sha256:030103e663ae5d85364c30147c81e8c072aa77eb23191f1f8b387e6bb8fc22df
+            env:
+              ARIA2_URL: http://aria2.downloads.svc.cluster.local
+              ARIA2_PORT: 8080
+              ARIA2_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: aria2_rpc_secret
+              SONARR_URL: http://sonarr.downloads.svc.cluster.local:8989
+              SONARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: sonarr_api_key
+              SONARR_QUALITY_PROFILE: HD-1080p - Czech
+              RADARR_URL: http://radarr.downloads.svc.cluster.local:7878
+              RADARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: radarr_api_key
+              RADARR_QUALITY_PROFILE: HD-1080p - Czech
+              WS_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: ws_username
+              WS_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: ws_password
+              SCC_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: scc_website
+              SCC_ACCESS_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: sccarr-secret
+                    key: scc_token
+            probes:
+              liveness:
+                enabled: false
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 10m
+                memory: 512Mi
+              limits:
+                memory: 1024Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop: [ALL]
+    service:
+      main:
+        enabled: false
+    ingress:
+      main:
+        enabled: false
