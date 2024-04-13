@@ -10,3 +10,4 @@ resources:
   - ./maintainerr/ks.yaml
   - ./plex/ks.yaml
   - ./tautulli/ks.yaml
+  - ./pinchflat/ks.yaml

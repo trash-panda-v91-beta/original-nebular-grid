@@ -1,0 +1,90 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: pinchflat
+spec:
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  interval: 30m
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          labels:
+            egress.home.arpa/internet: allow
+            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
+            ingress.home.arpa/nginx-internal: allow
+          securityContext:
+            runAsUser: ${APP_UID}
+            runAsGroup: ${APP_GID}
+            runAsNonRoot: true
+            fsGroup: ${APP_GID}
+            fsGroupChangePolicy: "OnRootMismatch"
+            supplementalGroups:
+              - 65542  # gladius:external-services
+        containers:
+          main:
+            image:
+              repository: ghcr.io/kieraneglin/pinchflat
+              tag: v0.1.13@sha256:d462f6395b11273740e24758d23e419457ef3dc1202ec34473ac845019058213
+            env:
+              JOURNAL_MODE: delete
+            resources:
+              requests:
+                cpu: 14m
+                memory: 1000M
+              limits:
+                memory: 1000M
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+    service:
+      main:
+        ports:
+          http:
+            port: 8945
+    ingress:
+      main:
+        enabled: true
+        className: internal-nginx
+        hosts:
+          - host: "${HOSTNAME}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - "${HOSTNAME}"
+    persistence:
+      tmp:
+        type: emptyDir
+      config:
+        enabled: true
+        existingClaim: ${VOLSYNC_CLAIM}
+        advancedMounts:
+          main:
+            main:
+              - path: /config
+      media:
+        type: nfs
+        server: asc.${DOMAIN}
+        path: /tank/media/downloads/pinchflat
+        globalMounts:
+          - path: /downloads
