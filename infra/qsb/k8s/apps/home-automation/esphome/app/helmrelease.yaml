@@ -78,7 +78,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: "${VOLSYNC_CLAIM}"
+        existingClaim: esphome-config
         advancedMounts:
           main:
             main:
