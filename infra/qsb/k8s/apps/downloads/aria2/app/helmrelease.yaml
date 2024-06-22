@@ -64,23 +64,22 @@ spec:
               runAsNonRoot: true
               capabilities:
                 drop: [ALL]
-          # gluetun:
-          #   image:
-          #     repository: ghcr.io/qdm12/gluetun
-          #     tag: v3.37.0
-          #   env:
-          #     DNS_KEEP_NAMESERVER: false
-          #     VPN_SERVICE_PROVIDER: privado
-          #     FIREWALL_INPUT_PORTS: 8080
-          #     FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
-          #     SERVER_CITIES: Amsterdam,Prague
-          #   envFrom:
-          #     - secretRef:
-          #         name: aria2-vpn-secret
-          #   securityContext:
-          #     capabilities:
-          #       add: [NET_ADMIN]
-          #     allowPrivilegeEscalation: false
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.38.0
+            env:
+              VPN_SERVICE_PROVIDER: privado
+              FIREWALL_INPUT_PORTS: 8080
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
+              SERVER_CITIES: Amsterdam,Prague
+            envFrom:
+              - secretRef:
+                  name: aria2-vpn-secret
+            securityContext:
+              capabilities:
+                add: [NET_ADMIN]
+              allowPrivilegeEscalation: false
     service:
       main:
         ports:
