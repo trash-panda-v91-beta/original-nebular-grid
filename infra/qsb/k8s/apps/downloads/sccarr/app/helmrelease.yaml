@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: ghcr.io/aka-raccoon/sccarr
-              tag: 0.0.1@sha256:030103e663ae5d85364c30147c81e8c072aa77eb23191f1f8b387e6bb8fc22df
+              tag: 0.0.2@sha256:ab866aad1337bcc49aa34391f1e0e4d9efacef238e60279f7e6fd0de4d135baf
             env:
               ARIA2_URL: http://aria2.downloads.svc.cluster.local
               ARIA2_PORT: 8080
