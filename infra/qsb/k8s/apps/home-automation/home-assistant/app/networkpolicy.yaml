@@ -30,3 +30,10 @@ spec:
               protocol: TCP
             - port: "10443"
               protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: selenium
+      toPorts:
+        - ports:
+            - port: "4444"
+              protocol: TCP
