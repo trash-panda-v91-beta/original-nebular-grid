@@ -41,7 +41,7 @@ spec:
           main:
             image:
               repository: ghcr.io/aka-raccoon/sccarr
-              tag: 0.0.4@sha256:af1a56b60fee88537fg1710df3db71ce6dea86fc1f7bd9b7e0630f7a3fc9b14c5d
+              tag: 0.0.4@sha256:af1a56b60fee885371710df3db71ce6dea86fc1f7bd9b7e0630f7a3fc9b14c5d
             env:
               ARIA2_URL: http://aria2.downloads.svc.cluster.local
               ARIA2_PORT: 8080
@@ -102,6 +102,22 @@ spec:
               readOnlyRootFilesystem: false
               capabilities:
                 drop: [ALL]
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.38.0
+            env:
+              VPN_SERVICE_PROVIDER: privado
+              FIREWALL_INPUT_PORTS: 8080
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
+              SERVER_CITIES: Amsterdam,Prague
+            envFrom:
+              - secretRef:
+                  name: sccarr-vpn-secret
+            securityContext:
+              capabilities:
+                add: [NET_ADMIN]
+              allowPrivilegeEscalation: false    
     service:
       main:
         enabled: false
