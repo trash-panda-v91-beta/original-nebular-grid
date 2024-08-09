@@ -31,9 +31,6 @@ spec:
             egress.home.arpa/internet: allow
             egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
           securityContext:
-            runAsUser: ${APP_UID}
-            runAsGroup: ${APP_GID}
-            runAsNonRoot: true
             fsGroup: ${APP_GID}
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups: [65542]
@@ -43,21 +40,21 @@ spec:
               repository: ghcr.io/aka-raccoon/sccarr
               tag: 0.0.5@sha256:51aae95ccafade86feb2c9b152e9e6167a050d0870b5cca611f900915d236dad 
             env:
-              ARIA2_URL: http://aria2.downloads.svc.cluster.local
+              ARIA2_URL: http://10.108.156.35
               ARIA2_PORT: 8080
               ARIA2_SECRET:
                 valueFrom:
                   secretKeyRef:
                     name: sccarr-secret
                     key: aria2_rpc_secret
-              SONARR_URL: http://sonarr.downloads.svc.cluster.local:8989
+              SONARR_URL: http://10.99.179.154:8989
               SONARR_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: sccarr-secret
                     key: sonarr_api_key
               SONARR_QUALITY_PROFILE: HD-1080p - Czech
-              RADARR_URL: http://radarr.downloads.svc.cluster.local:7878
+              RADARR_URL: http://10.103.3.69:7878
               RADARR_API_KEY:
                 valueFrom:
                   secretKeyRef:
@@ -100,6 +97,9 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
+              runAsUser: ${APP_UID}
+              runAsGroup: ${APP_GID}
+              runAsNonRoot: true
               capabilities:
                 drop: [ALL]
           gluetun:
@@ -117,7 +117,7 @@ spec:
             securityContext:
               capabilities:
                 add: [NET_ADMIN]
-              allowPrivilegeEscalation: false    
+              allowPrivilegeEscalation: false  
     service:
       main:
         enabled: false
