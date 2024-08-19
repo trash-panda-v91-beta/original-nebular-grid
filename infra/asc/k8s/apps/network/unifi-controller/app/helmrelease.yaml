@@ -24,9 +24,9 @@ spec:
 
         pod:
           securityContext:
-            runAsUser: 568
-            runAsGroup: 568
-            fsGroup: 568
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
               - 65542
@@ -38,12 +38,21 @@ spec:
               tag: "8.3.32"
             env:
               RUNAS_UID0: "false"
+              PUID: "999"
+              PGID: "999"
+              JVM_MAX_HEAP_SIZE: "1024M"
 
+            resources:
+              requests:
+                cpu: 12m
+                memory: 764Mi
+              limits:
+                memory: 789Mi
     service:
       main:
         ports:
-          http:
-            port: 80
+          https:
+            port: 8443
 
     ingress:
       main:
@@ -51,6 +60,7 @@ spec:
         className: "internal-nginx"
         annotations:
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
         hosts:
