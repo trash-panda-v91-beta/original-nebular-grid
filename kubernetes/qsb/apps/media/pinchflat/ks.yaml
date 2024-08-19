@@ -23,7 +23,4 @@ spec:
   postBuild:
     substitute:
       APP: *appname
-      HOSTNAME: pinchflat.${DOMAIN}
-      APP_UID: "568"
-      APP_GID: "568"
       VOLSYNC_CLAIM: pinchflat-config
