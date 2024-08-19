@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: echo-server
+  name: openspeedtest
 spec:
   interval: 30m
   chart:
@@ -18,42 +18,40 @@ spec:
 
   values:
     controllers:
-      echo-server:
-        annotations:
-          reloader.stakater.com/auto: "true"
-
+      openspeedtest:
         containers:
           app:
             image:
-              repository: ghcr.io/mendhak/http-https-echo
-              tag: 34
-            env:
-              HTTP_PORT: &port 8080
-              LOG_WITHOUT_NEWLINE: "true"
-              LOG_IGNORE_PATH: "/healthz"
+              repository: openspeedtest/latest
+              tag: v2.0.5
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
-              startup:
-                enabled: true
+                custom: true
                 spec:
-                  failureThreshold: 30
-                  periodSeconds: 5
+                  httpGet:
+                    path: /
+                    port: 3000
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
             resources:
               requests:
-                cpu: 5m
-                memory: 64M
+                cpu: 10m
+                memory: 128Mi
               limits:
-                memory: 64M
+                memory: 128Mi
 
     service:
       app:
-        controller: echo-server
+        controller: openspeedtest
         ports:
           http:
-            port: *port
+            port: 3000
 
     ingress:
       app:
@@ -61,7 +59,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: ingress-int.${DOMAIN}
         hosts:
-          - host: echo-server.${DOMAIN}
+          - host: openspeedtest.${DOMAIN}
             paths:
               - path: /
                 service:

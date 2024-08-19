@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname cloudflared
+  name: &appname openspeedtest
   namespace: flux-system
 spec:
   targetNamespace: network
@@ -11,13 +11,9 @@ spec:
     labels:
       app.kubernetes.io/name: *appname
   interval: 10m
-  path: "./kubernetes/qsb/apps/network/cloudflared/app"
+  path: "./kubernetes/qsb/apps/network/openspeedtest/app"
   prune: true
   sourceRef:
     kind: GitRepository
     name: home-ops-kubernetes
   wait: false
-  dependsOn:
-    - name: external-secrets-stores
-    - name: externaldns-external
-    - name: nginx-external
