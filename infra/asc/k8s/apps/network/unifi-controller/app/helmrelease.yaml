@@ -35,7 +35,7 @@ spec:
           main:
             image:
               repository: "ghcr.io/goofball222/unifi"
-              tag: "8.1.113"
+              tag: "8.3.32"
             env:
               RUNAS_UID0: "false"
 
