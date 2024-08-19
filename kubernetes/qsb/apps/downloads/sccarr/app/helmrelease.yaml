@@ -1,44 +1,64 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: sccarr
+  name: freyrarr
 spec:
   interval: 30m
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
+
   values:
     controllers:
-      main:
+      sccarr:
         type: cronjob
+
         annotations:
-          reloader.stakater.com/auto: 'true'
+          reloader.stakater.com/auto: "true"
+
         cronjob:
           schedule: 5 * * * *
+
         pod:
-          # enableServiceLinks: false
           imagePullSecrets:
             - name: private-ghcr
-          labels:
-            egress.home.arpa/internet: allow
-            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
           securityContext:
-            fsGroup: ${APP_GID}
+            fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups: [65542]
+
+        initContainers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.39.0
+            env:
+              VPN_SERVICE_PROVIDER: custom
+              VPN_TYPE: wireguard
+              FIREWALL_INPUT_PORTS: *port
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-vpn-secret
+            restartPolicy: Always
+            securityContext:
+              capabilities:
+                add: [NET_ADMIN]
+              allowPrivilegeEscalation: false
+
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/aka-raccoon/sccarr
-              tag: 0.0.5@sha256:51aae95ccafade86feb2c9b152e9e6167a050d0870b5cca611f900915d236dad 
+              tag: 0.0.5@sha256:51aae95ccafade86feb2c9b152e9e6167a050d0870b5cca611f900915d236dad
             env:
               ARIA2_URL: http://10.108.156.35
               ARIA2_PORT: 8080
@@ -81,13 +101,6 @@ spec:
                   secretKeyRef:
                     name: sccarr-secret
                     key: scc_token
-            probes:
-              liveness:
-                enabled: false
-              readiness:
-                enabled: false
-              startup:
-                enabled: false
             resources:
               requests:
                 cpu: 10m
@@ -102,25 +115,3 @@ spec:
               runAsNonRoot: true
               capabilities:
                 drop: [ALL]
-          gluetun:
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.38.0
-            env:
-              VPN_SERVICE_PROVIDER: privado
-              FIREWALL_INPUT_PORTS: 8080
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
-              SERVER_CITIES: Amsterdam,Prague
-            envFrom:
-              - secretRef:
-                  name: sccarr-vpn-secret
-            securityContext:
-              capabilities:
-                add: [NET_ADMIN]
-              allowPrivilegeEscalation: false  
-    service:
-      main:
-        enabled: false
-    ingress:
-      main:
-        enabled: false

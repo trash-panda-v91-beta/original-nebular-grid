@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: aria2
@@ -9,26 +9,30 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
+
   values:
     controllers:
-      main:
+      aria2:
         annotations:
-          reloader.stakater.com/auto: 'true'
-          secret.reloader.stakater.com/reload: aria2-vpn-secret
+          reloader.stakater.com/auto: "true"
+
         pod:
+          imagePullSecrets:
+            - name: private-ghcr
           securityContext:
-            fsGroup: ${APP_GID}
+            fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
-              - 65542  # gladius:external-services
+              - 65542 # gladius:external-services
+
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/aka-raccoon/aria2
               tag: 0.0.1@sha256:1fa15561b2b2792f794c79aa4993fcb8e380aa67adf66fc45a3a167651de8e86
@@ -67,44 +71,46 @@ spec:
           gluetun:
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: v3.38.0
+              tag: v3.39.0
             env:
-              VPN_SERVICE_PROVIDER: privado
-              FIREWALL_INPUT_PORTS: 8080
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
-              SERVER_CITIES: Amsterdam,Prague
+              VPN_SERVICE_PROVIDER: custom
+              VPN_TYPE: wireguard
+              FIREWALL_INPUT_PORTS: *port
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
             envFrom:
               - secretRef:
-                  name: aria2-vpn-secret
+                  name: sabnzbd-vpn-secret
             securityContext:
               capabilities:
                 add: [NET_ADMIN]
               allowPrivilegeEscalation: false
     service:
-      main:
+      app:
+        controller: aria2
         ports:
           http:
             port: 8080
+
     ingress:
-      main:
-        enabled: true
-        className: internal-nginx
+      app:
+        className: "internal-nginx"
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: aria2.${DOMAIN}
         hosts:
-          - host: ${HOSTNAME}
+          - host: aria2.${DOMAIN}
             paths:
               - path: /
                 service:
-                  name: main
+                  identifier: app
                   port: http
-        tls:
-          - hosts: ['${HOSTNAME}']
+
     persistence:
       config:
         enabled: true
-        existingClaim: ${VOLSYNC_CLAIM}
+        existingClaim: aria2-config
         advancedMounts:
-          main:
-            main:
+          aria2:
+            app:
               - path: /config
       media:
         type: nfs

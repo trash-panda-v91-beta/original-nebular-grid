@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: prowlarr
@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -18,27 +18,23 @@ spec:
 
   values:
     controllers:
-      main:
+      prowlarr:
         annotations:
           reloader.stakater.com/auto: "true"
 
         pod:
-          labels:
-            egress.home.arpa/internet: allow
-            egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
-            ingress.home.arpa/nginx-internal: allow
           securityContext:
-            runAsUser: ${APP_UID}
-            runAsGroup: ${APP_GID}
+            runAsUser: 2000
+            runAsGroup: 2000
             runAsNonRoot: true
-            fsGroup: ${APP_GID}
+            fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/prowlarr-nightly
-              tag: 1.12.2.4203@sha256:18edb6b111ac3af39fe616c16a72a701d527a2cda3494ead1cc0474adda9bdf5
+              tag: 1.21.2.4648@sha256:1cb047a17519c87e015b2585d1bdf0234ef35f1eb0addf13d4ad92d4db858700
             env:
               COMPlus_EnableDiagnostics: "0"
               PROWLARR__INSTANCE_NAME: Prowlarr
@@ -51,6 +47,16 @@ spec:
                   secretKeyRef:
                     name: prowlarr-secret
                     key: api_key
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources:
               requests:
                 cpu: 18m
@@ -65,27 +71,25 @@ spec:
                   - ALL
 
     service:
-      main:
+      app:
+        controller: prowlarr
         ports:
           http:
             port: *port
 
     ingress:
-      main:
-        enabled: true
+      app:
         className: "internal-nginx"
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ingress-int.${DOMAIN}
         hosts:
-          - host: "${HOSTNAME}"
+          - host: prowlarr.${DOMAIN}
             paths:
               - path: /
                 service:
-                  name: main
+                  identifier: app
                   port: http
-        tls:
-          - hosts:
-              - "${HOSTNAME}"
 
     persistence:
       config:
-        enabled: true
-        existingClaim: ${VOLSYNC_CLAIM}
+        existingClaim: prowlarr-config

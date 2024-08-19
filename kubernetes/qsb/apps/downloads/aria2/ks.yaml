@@ -23,7 +23,3 @@ spec:
   postBuild:
     substitute:
       APP: *appname
-      HOSTNAME: aria2.${DOMAIN}
-      APP_UID: "568"
-      APP_GID: "568"
-      VOLSYNC_CLAIM: aria2-config

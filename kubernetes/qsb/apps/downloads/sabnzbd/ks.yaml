@@ -19,12 +19,10 @@ spec:
   wait: false
   dependsOn:
     - name: rook-ceph-cluster
+    - name: openebs
     - name: volsync
     - name: external-secrets-stores
   postBuild:
     substitute:
       APP: *appname
-      HOSTNAME: sabnzbd.${DOMAIN}
-      APP_UID: "568"
-      APP_GID: "568"
       VOLSYNC_CLAIM: sabnzbd-config

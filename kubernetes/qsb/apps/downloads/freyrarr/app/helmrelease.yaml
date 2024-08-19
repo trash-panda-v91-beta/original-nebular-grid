@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: freyrarr
@@ -9,36 +9,54 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
+
   values:
     controllers:
-      main:
+      freyrarr:
         type: cronjob
+
         annotations:
-          reloader.stakater.com/auto: 'true'
+          reloader.stakater.com/auto: "true"
+
         cronjob:
-          schedule: 15 * * * *
+          schedule: "15 * * * *"
+
         pod:
-          # enableServiceLinks: false
           imagePullSecrets:
             - name: private-ghcr
-          labels:
-            egress.home.arpa/internet: allow
-            egress.home.arpa/kubedns: allow  # FIXME: Remove when clusterNetworkPolicy is in place
           securityContext:
-            runAsUser: ${APP_UID}
-            runAsGroup: ${APP_GID}
-            runAsNonRoot: true
-            fsGroup: ${APP_GID}
+            fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
-            supplementalGroups: [65542]
+            supplementalGroups:
+              - 65542 # gladius:external-services
+
+        initContainers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.39.0
+            env:
+              VPN_SERVICE_PROVIDER: custom
+              VPN_TYPE: wireguard
+              FIREWALL_INPUT_PORTS: *port
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-vpn-secret
+            restartPolicy: Always
+            securityContext:
+              capabilities:
+                add: [NET_ADMIN]
+              allowPrivilegeEscalation: false
+
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/aka-raccoon/freyrarr
               tag: 0.0.5@sha256:bd59fa017aeb7a6b5fddc76d2bf31fe129b600ef44c4fc9aac7ad266108883cd
@@ -60,21 +78,19 @@ spec:
                 enabled: false
             resources:
               requests:
-                cpu: 10m
-                memory: 512Mi
-              limits:
+                cpu: 5m
                 memory: 1024Mi
+              limits:
+                memory: 6144Mi
             securityContext:
               allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
+              runAsUser: ${APP_UID}
+              runAsGroup: ${APP_GID}
+              runAsNonRoot: true
               capabilities:
                 drop: [ALL]
-    service:
-      main:
-        enabled: false
-    ingress:
-      main:
-        enabled: false
+
     persistence:
       config:
         enabled: true

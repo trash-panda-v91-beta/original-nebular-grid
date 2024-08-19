@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: radarr
+  name: bazarr
 spec:
   interval: 30m
   chart:
@@ -18,7 +18,7 @@ spec:
 
   values:
     controllers:
-      radarr:
+      bazarr:
         annotations:
           reloader.stakater.com/auto: "true"
 
@@ -30,42 +30,35 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
-              - 65542 # gladius:external-services
+              - 65542
 
         containers:
           app:
             image:
-              repository: ghcr.io/onedr0p/radarr-develop
-              tag: 5.9.0.9058@sha256:56b4ca44b4115ea6071df4323c7e1bec836f28d131d8705c53130c5ba8eb1094
-            env:
-              COMPlus_EnableDiagnostics: "0"
-              RADARR__INSTANCE_NAME: Radarr
-              RADARR__PORT: &port 7878
-              RADARR__AUTHENTICATION_METHOD: External
-              RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
-              RADARR__APPLICATION_URL: "https://radarr.${DOMAIN}"
-              RADARR__LOG_LEVEL: info
-              RADARR__API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: radarr-secret
-                    key: api_key
+              repository: ghcr.io/onedr0p/bazarr
+              tag: 1.4.3@sha256:d2b70813f7d636fb1ab3448e13ca4074630b63216c6c6d02d034cd5d9e938ea3
+            envFrom:
+              - secretRef:
+                  name: bazarr-secret
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
-              startup:
-                enabled: true
+                custom: true
                 spec:
-                  failureThreshold: 30
-                  periodSeconds: 5
+                  httpGet:
+                    path: /health
+                    port: &port 6767
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
             resources:
               requests:
-                cpu: 20m
-                memory: 384Mi
+                cpu: 15m
+                memory: 256Mi
               limits:
-                memory: 1536Mi
+                memory: 512Mi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -75,7 +68,7 @@ spec:
 
     service:
       app:
-        controller: radarr
+        controller: bazarr
         ports:
           http:
             port: *port
@@ -86,7 +79,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: ingress-int.${DOMAIN}
         hosts:
-          - host: radarr.${DOMAIN}
+          - host: bazarr.${DOMAIN}
             paths:
               - path: /
                 service:
@@ -95,11 +88,7 @@ spec:
 
     persistence:
       config:
-        existingClaim: radarr-config
-      add-ons:
-        type: emptyDir
-      tmp:
-        type: emptyDir
+        existingClaim: bazarr-config
       media:
         type: nfs
         server: asc.${DOMAIN}
