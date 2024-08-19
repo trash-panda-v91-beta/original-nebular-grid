@@ -51,7 +51,6 @@ spec:
           http:
             port: 8443
             protocol: TCP
-            targetPort: 8443
 
     ingress:
       main:
