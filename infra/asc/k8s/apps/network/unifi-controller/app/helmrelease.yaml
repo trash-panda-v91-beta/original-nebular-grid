@@ -25,8 +25,8 @@ spec:
         pod:
           securityContext:
             runAsUser: 999
-            runAsGroup: 102
-            fsGroup: 102
+            runAsGroup: 999
+            fsGroup: 999
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
               - 65542
@@ -39,7 +39,7 @@ spec:
             env:
               RUNAS_UID0: "false"
               PUID: "999"
-              PGID: "102"
+              PGID: "999"
               JVM_MAX_HEAP_SIZE: "1024M"
 
             resources:
