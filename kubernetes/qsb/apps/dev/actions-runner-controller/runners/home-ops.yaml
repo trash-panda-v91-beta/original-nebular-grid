@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: arc-home-ops
@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: actions-runner-controller-charts/gha-runner-scale-set
-      version: 0.8.1
+      version: 0.9.3
       sourceRef:
         kind: HelmRepository
         name: actions-runner-controller
@@ -35,9 +35,6 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/name: arc-home-ops-listener
-          egress.home.arpa/world: allow
-          egress.home.arpa/apiserver: allow
-          egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
       spec:
         containers: []
 
@@ -45,12 +42,10 @@ spec:
       metadata:
         labels:
           app.kubernetes.io/name: arc-home-ops-runner
-          egress.home.arpa/world: allow
-          egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
       spec:
         containers:
           - name: runner
-            image: ghcr.io/onedr0p/actions-runner:2.311.0
+            image: ghcr.io/onedr0p/actions-runner:2.319.1
             command: ["/home/runner/run.sh"]
 
   valuesFrom:
