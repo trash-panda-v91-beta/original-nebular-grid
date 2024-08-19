@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: plex-trakt-sync
@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -17,26 +17,22 @@ spec:
   interval: 30m
   values:
     controllers:
-      main:
+      plex-trakt-sync:
         annotations:
           reloader.stakater.com/auto: "true"
 
         pod:
-          enableServiceLinks: false
-          labels:
-            egress.home.arpa/internet: allow
-            egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
           securityContext:
-            runAsUser: ${APP_UID}
-            runAsGroup: ${APP_GID}
-            fsGroup: ${APP_GID}
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/taxel/plextraktsync
-              tag: 0.28.8
+              tag: 0.31.7
             args:
               - watch
             env:
@@ -71,21 +67,13 @@ spec:
               limits:
                 memory: 101M
 
-    service:
-      main:
-        enabled: false
-
-    ingress:
-      main:
-        enabled: false
-
     persistence:
       config:
         enabled: true
-        existingClaim: "${VOLSYNC_CLAIM}"
+        existingClaim: plex-trakt-sync-config
         advancedMounts:
-          main:
-            main:
+          plex-trakt-sync:
+            app:
               - path: /app/config
       config-yaml:
         type: configMap

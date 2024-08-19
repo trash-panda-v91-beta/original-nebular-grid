@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: plex
@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.4.0
+      version: 3.3.2
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -17,23 +17,17 @@ spec:
   interval: 30m
   values:
     controllers:
-      main:
+      plex:
         annotations:
           reloader.stakater.com/auto: "true"
 
         pod:
-          enableServiceLinks: false
-          labels:
-            egress.home.arpa/internet: allow
-            ingress.home.arpa/lan: allow
-            ingress.home.arpa/nginx-external: allow
-            egress.home.arpa/kubedns: allow # FIXME: Remove when clusterNetworkPolicy is in place
           nodeSelector:
             intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
-            runAsUser: ${APP_UID}
-            runAsGroup: ${APP_GID}
-            fsGroup: ${APP_GID}
+            runAsUser: 2000
+            runAsGroup: 2000
+            fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
               - 44
@@ -41,10 +35,23 @@ spec:
               - 65542 # gladius:external-services
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/plex
-              tag: 1.40.2.8395-c67dce28e@sha256:3861cc940ecdf97b773fa24d826407cea86559d0f26366d7acd10cef1704f46c
+              tag: 1.40.5.8854-f36c552fd@sha256:b9c296227e318d81b62873aebfb25ba78685b65546e47a4840d31dd501504f1c
+            env:
+              PLEX_ADVERTISE_URL: https://10.1.1.136:32400,https://plex.${DOMAIN}:443
+              PLEX_NO_AUTH_NETWORKS: 10.244.0.0/16
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
             resources:
               requests:
                 cpu: 100m
@@ -55,52 +62,59 @@ spec:
                 memory: 9248M
 
     service:
-      main:
+      app:
+        controller: plex
         type: LoadBalancer
-        externalTrafficPolicy: Cluster
         annotations:
-          io.cilium/lb-ipam-ips: "10.45.0.20"
+          io.cilium/lb-ipam-ips: 10.1.1.136
         ports:
           http:
             port: 32400
 
     ingress:
-      main:
-        enabled: true
+      app:
         annotations:
           external-dns.alpha.kubernetes.io/target: ingress-ext.${DOMAIN}
           nginx.ingress.kubernetes.io/backend-protocol: HTTPS
         className: "external-nginx"
         hosts:
-          - host: "${HOSTNAME}"
+          - host: plex.${DOMAIN}
             paths:
               - path: /
                 service:
-                  name: main
+                  identifier: app
                   port: http
-        tls:
-          - hosts:
-              - "${HOSTNAME}"
 
     persistence:
       config:
-        enabled: true
-        existingClaim: "${VOLSYNC_CLAIM}"
+        existingClaim: plex-config
         advancedMounts:
-          main:
-            main:
+          plex:
+            app:
               - path: /config
+      plex-cache:
+        existingClaim: plex-cache
+        advancedMounts:
+          plex:
+            app:
+              - path: /config/Library/Application Support/Plex Media Server/Cache
+      logs:
+        type: emptyDir
+        advancedMounts:
+          plex:
+            app:
+              - path: /config/Library/Application Support/Plex Media Server/Logs
       nfs-nas-media:
         type: nfs
         server: asc.${DOMAIN}
         path: /tank/media
         advancedMounts:
-          main:
-            main:
+          plex:
+            app:
               - path: /data/nas-media
       transcode:
         type: emptyDir
         advancedMounts:
-          main:
-            main:
+          plex:
+            app:
               - path: /transcode
