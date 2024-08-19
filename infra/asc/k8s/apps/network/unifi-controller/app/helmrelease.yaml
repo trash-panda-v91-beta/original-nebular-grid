@@ -50,21 +50,20 @@ spec:
         ports:
           http:
             port: 8443
-            protocol: https
+            protocol: TCP
+            targetPort: 8443
 
     ingress:
       main:
         enabled: true
         className: "internal-nginx"
         annotations:
-          nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
         hosts:
           - host: &host "unifi-cont.${DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
                 service:
                   name: main
                   port: http
