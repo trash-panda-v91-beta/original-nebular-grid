@@ -62,7 +62,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
         hosts:
-          - host: &host "unifi.${DOMAIN}"
+          - host: &host "unifi-cont.${DOMAIN}"
             paths:
               - path: /
                 service:
