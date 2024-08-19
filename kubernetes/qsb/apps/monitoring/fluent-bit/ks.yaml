@@ -3,7 +3,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname grafana
+  name: &appname fluent-bit
   namespace: flux-system
 spec:
   targetNamespace: monitoring
@@ -11,11 +11,12 @@ spec:
     labels:
       app.kubernetes.io/name: *appname
   interval: 10m
-  path: "./kubernetes/qsb/apps/monitoring/grafana/app"
+  path: "./kubernetes/qsb/apps/monitoring/fluent-bit/app"
   prune: true
   sourceRef:
     kind: GitRepository
     name: home-ops-kubernetes
-  wait: false
+  wait: true
   dependsOn:
     - name: external-secrets-stores
+    - name: rook-ceph-cluster

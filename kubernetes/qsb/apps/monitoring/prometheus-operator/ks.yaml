@@ -3,19 +3,19 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &appname grafana
+  name: &appname prometheus-operator-crds
   namespace: flux-system
 spec:
   targetNamespace: monitoring
   commonMetadata:
     labels:
       app.kubernetes.io/name: *appname
-  interval: 10m
-  path: "./kubernetes/qsb/apps/monitoring/grafana/app"
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+  path: "./kubernetes/qsb/apps/monitoring/prometheus-operator/crds"
   prune: true
   sourceRef:
     kind: GitRepository
     name: home-ops-kubernetes
   wait: false
-  dependsOn:
-    - name: external-secrets-stores
