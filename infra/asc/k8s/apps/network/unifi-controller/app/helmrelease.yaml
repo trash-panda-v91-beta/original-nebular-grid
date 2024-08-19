@@ -80,6 +80,5 @@ spec:
         type: hostPath
         hostPath: /tank/apps/unifi
         hostPathType: Directory
-        accessMode: ReadWriteOnce
         globalMounts:
           - path: /usr/lib/unifi/data
