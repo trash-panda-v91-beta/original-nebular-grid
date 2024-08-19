@@ -6,7 +6,7 @@ metadata:
   name: letsencrypt-staging
 spec:
   acme:
-    email: ${ACME_EMAIL}
+    email: postmaster@bjw-s.dev
     preferredChain: ""
     privateKeySecretRef:
       name: letsencrypt-staging
@@ -19,4 +19,4 @@ spec:
               key: api-token
         selector:
           dnsZones:
-            - ${DOMAIN}
+            - bjw-s.dev
