@@ -45,8 +45,10 @@ spec:
                 memory: 764Mi
               limits:
                 memory: 789Mi
+
     service:
       main:
+        type: LoadBalancer
         ports:
           http:
             port: 8443
