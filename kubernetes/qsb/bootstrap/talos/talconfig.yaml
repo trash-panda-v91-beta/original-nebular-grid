@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
-clusterName: ${CLUSTER_NAME}
-endpoint: "https://${CLUSTER_NAME}.${DOMAIN}:6443"
+clusterName: ${clusterName}
+endpoint: "https://${clusterEndpointIP}:6443"
 
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
 talosVersion: v1.7.6
@@ -12,7 +12,6 @@ cniConfig:
   name: none
 
 additionalApiServerCertSans: &san
-  - ${CLUSTER_VIP}
   - ${CLUSTER_NAME}.${DOMAIN}
   - "127.0.0.1"
 additionalMachineCertSans: *san
@@ -24,12 +23,18 @@ nodes:
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata3/host2/target2:0:0/2:0:0:0/
     networkInterfaces:
-      - deviceSelector:
-          driver: e1000e
+      - interface: bond0
+        bond:
+          mode: active-backup
+          deviceSelectors:
+            - hardwareAddr: ea:16:ce:4c:ee:ae
+              driver: e1000e
         dhcp: true
+        vip:
+          ip: ${CLUSTER_VIP}
         vlans:
-          - &vlan40
-            vlanId: 40
+          - &vlan303
+            vlanId: 303
             mtu: 1500
             dhcp: true
             dhcpOptions:
@@ -41,11 +46,17 @@ nodes:
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata1/host0/target0:0:0/0:0:0:0/
     networkInterfaces:
-      - deviceSelector:
-          driver: r8169
+      - interface: bond0
+        bond:
+          mode: active-backup
+          deviceSelectors:
+            - hardwareAddr: 42:c1:f4:eb:86:ff
+              driver: r8169
         dhcp: true
+        vip:
+          ip: ${CLUSTER_VIP}
         vlans:
-          - *vlan40
+          - *vlan303
 
   - hostname: qsb-xi.${DOMAIN}
     ipAddress: 10.1.1.33
@@ -53,11 +64,17 @@ nodes:
     installDiskSelector:
       busPath: /pci0000:00/0000:00:17.0/ata1/host0/target0:0:0/0:0:0:0/
     networkInterfaces:
-      - deviceSelector:
-          driver: "r8169"
+      - interface: bond0
+        bond:
+          mode: active-backup
+          deviceSelectors:
+            - hardwareAddr: 8e:b8:d8:c0:82:1d
+              driver: r8169
         dhcp: true
+        vip:
+          ip: ${CLUSTER_VIP}
         vlans:
-          - *vlan40
+          - *vlan303
 
 controlPlane:
   schematic:
@@ -68,6 +85,7 @@ controlPlane:
         officialExtensions:
           - siderolabs/intel-ucode
           - siderolabs/i915-ucode
+
   patches:
     # Disable search domain everywhere
     - |-
