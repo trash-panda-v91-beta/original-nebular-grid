@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: external-secrets
@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: external-secrets
-      version: 0.9.11
+      version: 0.10.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -17,7 +17,7 @@ spec:
         namespace: flux-system
   values:
     installCRDs: true
-    replicaCount: 3
+    replicaCount: 1
     leaderElect: true
     grafana:
       enabled: true
