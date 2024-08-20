@@ -39,6 +39,18 @@ nodes:
             dhcp: true
             dhcpOptions:
               routeMetric: 4096
+    patches:
+      - &kubelet_extra_mounts |-
+        machine:
+          kubelet:
+            extraMounts:
+              - destination: /var/openebs/local
+                type: bind
+                source: /var/openebs/local
+                options:
+                  - rbind
+                  - rshared
+                  - rw
 
   - hostname: qsb-nu.${DOMAIN}
     ipAddress: 10.1.1.32
