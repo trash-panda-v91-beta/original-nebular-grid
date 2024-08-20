@@ -1,0 +1,32 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Loose versioning for non-semver packages",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": [
+        "ghcr.io/onedr0p/plex",
+        "ghcr.io/xirixiz/dsmr-reader-docker"
+      ],
+      "versioning": "loose"
+    },
+    {
+      "description": "PEP440 versioning for radicale",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["tomsquest/docker-radicale"],
+      "versioning": "pep440"
+    },
+    {
+      "description": "Custom versioning for http-https-echo",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/mendhak/http-https-echo"],
+      "versioning": "regex:^(?<major>\\d+)$"
+    },
+    {
+      "description": "Custom versioning for miniflux",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["ghcr.io/miniflux/miniflux"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<compatibility>)$"
+    }
+  ]
+}

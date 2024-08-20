@@ -1,0 +1,15 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "packageRules": [
+    {
+      "description": "Separate PRs for qsb cluster",
+      "matchFileNames": ["**/kubernetes/qsb/**"],
+      "additionalBranchPrefix": "qsb/"
+    },
+    {
+      "description": "Separate PRs for asc cluster",
+      "matchFileNames": ["**/kubernetes/asc/**"],
+      "additionalBranchPrefix": "asc/"
+    }
+  ]
+}
