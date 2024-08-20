@@ -62,3 +62,17 @@ tasks:
         msg: "Kustomization file {{.kustomization_file}} not found"
       - sh: kubectl config get-contexts {{.cluster}}
         msg: "Kubectl context {{.cluster}} not found"
+
+  sync:
+    desc: Reconcile a Flux Kustomization resource for a cluster
+    summary: |
+      Args:
+        cluster: Cluster to run command against (default: qsb)
+    vars:
+      cluster: '{{.cluster | default "qsb"}}'
+    cmds:
+      - flux
+        --context "{{.cluster}}"
+        --namespace flux-system
+        reconcile ks cluster
+        --with-source
