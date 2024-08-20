@@ -1,6 +1,6 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2beta2.json
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: spegel
@@ -9,36 +9,12 @@ spec:
   chart:
     spec:
       chart: spegel
-      version: v0.0.17
+      version: v0.0.23
       sourceRef:
         kind: HelmRepository
-        name: xenitab
+        name: spegel
         namespace: flux-system
       interval: 30m
-  values:
-    spegel:
-      containerdSock: /run/containerd/containerd.sock
-      containerdRegistryConfigPath: /etc/cri/conf.d/hosts
-    service:
-      registry:
-        hostPort: 29999
-    serviceMonitor:
-      enabled: true
-
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              version: v1
-              kind: DaemonSet
-              name: spegel
-            patch: |
-              - op: add
-                path: /spec/template/metadata/labels/egress.home.arpa~1apiserver
-                value: allow
-              - op: add
-                path: /spec/template/metadata/labels/egress.home.arpa~1world
-                value: allow
-              - op: add
-                path: /spec/template/metadata/labels/egress.home.arpa~1kubedns
-                value: allow
+  valuesFrom:
+    - kind: ConfigMap
+      name: spegel-helm-values
