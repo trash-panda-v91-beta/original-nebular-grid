@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
-clusterName: ${clusterName}
-endpoint: "https://${clusterEndpointIP}:6443"
+clusterName: ${CLUSTER_NAME}
+endpoint: "https://${CLUSTER_NAME}.${DOMAIN}:6443"
 
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
 talosVersion: v1.7.6
@@ -27,7 +27,7 @@ nodes:
         bond:
           mode: active-backup
           deviceSelectors:
-            - hardwareAddr: ea:16:ce:4c:ee:ae
+            - hardwareAddr: 1c:69:7a:a6:d3:f2
               driver: e1000e
         dhcp: true
         vip:
@@ -50,7 +50,7 @@ nodes:
         bond:
           mode: active-backup
           deviceSelectors:
-            - hardwareAddr: 42:c1:f4:eb:86:ff
+            - hardwareAddr: d8:9e:f3:84:82:e7
               driver: r8169
         dhcp: true
         vip:
@@ -68,7 +68,7 @@ nodes:
         bond:
           mode: active-backup
           deviceSelectors:
-            - hardwareAddr: 8e:b8:d8:c0:82:1d
+            - hardwareAddr: b8:85:84:9f:dc:1e
               driver: r8169
         dhcp: true
         vip:
