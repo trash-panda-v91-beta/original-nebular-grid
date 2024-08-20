@@ -3,9 +3,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: ingress-nginx
+  name: openebs
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://kubernetes.github.io/ingress-nginx
+  url: https://openebs.github.io/openebs
   timeout: 3m

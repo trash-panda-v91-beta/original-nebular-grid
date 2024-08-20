@@ -11,8 +11,10 @@ spec:
     branch: main
   url: https://github.com/aka-raccoon/nebular-grid.git
   ignore: |
-    *
-    !kubernetes/qsb
+    # exclude all
+    /*
+    # include gitops dirs
+    !/kubernetes
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -32,8 +34,6 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
-  dependsOn:
-    - name: flux
   postBuild:
     substituteFrom:
       - kind: ConfigMap

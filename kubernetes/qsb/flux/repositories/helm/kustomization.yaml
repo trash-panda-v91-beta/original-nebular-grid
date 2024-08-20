@@ -1,18 +1,15 @@
 ---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - actions-runner-controller.yaml
   - angelnu.yaml
-  - authentik.yaml
   - backube.yaml
-  - bitnami.yaml
   - bjw-s.yaml
   - cilium.yaml
   - crunchydata.yaml
-  - democratic-csi.yaml
   - external-secrets.yaml
-  - ext-postgres-operator.yaml
   - grafana.yaml
   - ingress-nginx.yaml
   - intel.yaml
@@ -23,13 +20,12 @@ resources:
   - kubernetes-sigs-metrics-server.yaml
   - kubernetes-sigs-nfd.yaml
   - metallb.yaml
+  - openebs.yaml
   - piraeus.yaml
   - postfinance.yaml
   - prometheus-community.yaml
   - rook-ceph.yaml
+  - spegel.yaml
   - stakater.yaml
-  - tf-controller.yaml
+  - stevehipwell.yaml
   - vector.yaml
-  - weave-gitops.yaml
-  - windmill.yaml
-  - zalando-postgres-operator.yaml
