@@ -69,6 +69,8 @@ nodes:
           ip: ${CLUSTER_VIP}
         vlans:
           - *vlan303
+    patches:
+      - *kubelet_extra_mounts
 
   - hostname: qsb-xi.${DOMAIN}
     ipAddress: 10.1.1.33
@@ -87,6 +89,8 @@ nodes:
           ip: ${CLUSTER_VIP}
         vlans:
           - *vlan303
+    patches:
+      - *kubelet_extra_mounts
 
 controlPlane:
   schematic:
