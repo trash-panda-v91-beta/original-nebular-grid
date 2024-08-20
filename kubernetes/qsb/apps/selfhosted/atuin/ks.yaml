@@ -18,11 +18,5 @@ spec:
     name: home-ops-kubernetes
   wait: false
   dependsOn:
-    - name: crunchy-postgres-operator
-    - name: external-secrets-cluster-secrets
-  postBuild:
-    substitute:
-      APP: *appname
-      HOSTNAME: atuin.${DOMAIN}
-      DB_NAME: atuin
-      DB_USER: atuin
+    - name: crunchy-postgres-operator-cluster
+    - name: crunchy-postgres-operator-secretstore
