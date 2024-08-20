@@ -1,5 +1,5 @@
 ---
 providerRegex: |
-  ^(mu|nu|xi)$
+  ^(qsb-mu|qsb-nu|qsb-xi)$
 
 bypassDnsResolution: true
