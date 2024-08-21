@@ -24,9 +24,11 @@ spec:
 
         pod:
           securityContext:
+            privileged: true
+            runAsUser: 999
+            runAsGroup: 999
+            fsGroup: 999
             fsGroupChangePolicy: OnRootMismatch
-            supplementalGroups:
-              - 65542
 
         containers:
           main:
@@ -34,9 +36,9 @@ spec:
               repository: "ghcr.io/goofball222/unifi"
               tag: "8.3.32"
             env:
-              # RUNAS_UID0: "false"
-              # PUID: "999"
-              # PGID: "999"
+              RUNAS_UID0: "false"
+              PUID: "999"
+              PGID: "999"
               JVM_MAX_HEAP_SIZE: "1024M"
 
             resources:
@@ -53,6 +55,12 @@ spec:
           http:
             port: 8443
             protocol: TCP
+          inform:
+            port: 8080
+            protocol: TCP
+          discover:
+            port: 10001
+            protocol: UDP
 
     ingress:
       main:
