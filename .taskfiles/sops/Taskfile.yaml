@@ -11,8 +11,28 @@ tasks:
       SECRET_FILES:
         sh: find . -type f -name '*.sops.yaml' ! -name ".sops.yaml"
     cmds:
-      - for: {var: SECRET_FILES}
+      - for: { var: SECRET_FILES }
         cmd: |
           echo "Re-encrypting {{ .ITEM }}"
           sops --decrypt --in-place "{{ .ITEM }}"
           sops --encrypt --in-place "{{ .ITEM }}"
+
+  decrypt:
+    desc: Decrypt sops secret
+    silent: true
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - file
+    cmds:
+      - sops --decrypt --in-place "{{.file}}"
+
+  encrypt:
+    desc: Encrypt sops secret
+    silent: true
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - file
+    cmds:
+      - sops --encrypt --in-place "{{.file}}"
