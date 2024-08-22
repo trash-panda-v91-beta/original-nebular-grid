@@ -153,10 +153,19 @@ tasks:
   _apply-machineconfig:
     internal: true
     desc: Apply a single Talos machineConfig to a Talos node
+    vars:
+      insecure:
+        sh: |
+          if talosctl --nodes "{{.hostname}}" --context {{.cluster}} disks -i &> /dev/null; then
+            echo "true"
+          else
+            echo "false"
+          fi
     cmds:
       - talosctl --context {{.cluster}} apply-config
         --nodes "{{.hostname}}"
         --file "{{.KUBERNETES_DIR}}/{{.cluster}}/bootstrap/talos/clusterconfig/{{.filename}}"
+        {{ if eq "true" .insecure }}--insecure{{ end }}
         {{ if eq "true" .dry_run }}--dry-run{{ end }}
     requires:
       vars:
