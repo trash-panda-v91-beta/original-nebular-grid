@@ -97,7 +97,7 @@ spec:
         existingClaim: lidarr-config
       media:
         type: nfs
-        server: asc.${DOMAIN}
+        server: asc.internal
         path: /tank/media
         globalMounts:
           - path: /data/nas-media

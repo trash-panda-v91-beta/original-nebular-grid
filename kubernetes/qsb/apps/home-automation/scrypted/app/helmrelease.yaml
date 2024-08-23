@@ -112,7 +112,7 @@ spec:
         hostPathType: Directory
       recs:
         type: nfs
-        server: asc.${DOMAIN}
+        server: asc.internal
         path: /tank/apps/scrypted
         globalMounts:
           - path: /recs

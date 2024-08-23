@@ -100,7 +100,7 @@ spec:
               - path: /home/kah/.config
       media:
         type: nfs
-        server: asc.${DOMAIN}
+        server: asc.internal
         path: /tank/media/downloads/freyrarr
         globalMounts:
           - path: /data/nas-media/downloads/freyrarr
