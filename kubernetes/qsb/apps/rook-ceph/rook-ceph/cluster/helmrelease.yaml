@@ -80,13 +80,13 @@ spec:
         config:
           osdsPerDevice: "1"
         nodes:
-          - name: "qsb-mu"
+          - name: "mu"
             devices:
               - name: "/dev/disk/by-id/nvme-WDC_WDS100T2B0C-00PXH0_21190N452013"
-          - name: "qsb-nu"
+          - name: "nu"
             devices:
               - name: "/dev/disk/by-id/nvme-WD_Blue_SN580_1TB_232551802007"
-          - name: "qsb-xi"
+          - name: "xi"
             devices:
               - name: "/dev/disk/by-id/nvme-WD_Blue_SN580_1TB_23256J801273"
     cephBlockPools:

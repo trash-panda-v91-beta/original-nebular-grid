@@ -17,7 +17,7 @@ additionalApiServerCertSans: &san
 additionalMachineCertSans: *san
 
 nodes:
-  - hostname: qsb-mu.${DOMAIN}
+  - hostname: mu.${DOMAIN}
     ipAddress: 10.1.1.31
     controlPlane: true
     installDiskSelector:
@@ -52,7 +52,7 @@ nodes:
                   - rshared
                   - rw
 
-  - hostname: qsb-nu.${DOMAIN}
+  - hostname: nu.${DOMAIN}
     ipAddress: 10.1.1.32
     controlPlane: true
     installDiskSelector:
@@ -72,7 +72,7 @@ nodes:
     patches:
       - *kubelet_extra_mounts
 
-  - hostname: qsb-xi.${DOMAIN}
+  - hostname: xi.${DOMAIN}
     ipAddress: 10.1.1.33
     controlPlane: true
     installDiskSelector:
