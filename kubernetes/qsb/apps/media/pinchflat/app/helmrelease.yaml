@@ -63,12 +63,11 @@ spec:
       app:
         className: internal-nginx
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: pinchflat.${DOMAIN}
+          external-dns.alpha.kubernetes.io/target: ingress-int.${DOMAIN}
         hosts:
           - host: pinchflat.${DOMAIN}
             paths:
               - path: /
-                pathType: Prefix
                 service:
                   identifier: app
                   port: http
@@ -80,8 +79,8 @@ spec:
         enabled: true
         existingClaim: pinchflat-config
         advancedMounts:
-          main:
-            main:
+          pinchflat:
+            app:
               - path: /config
       media:
         type: nfs
