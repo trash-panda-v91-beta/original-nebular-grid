@@ -35,7 +35,7 @@ spec:
           app:
             image:
               repository: ghcr.io/aka-raccoon/aria2
-              tag: 0.0.1@sha256:1fa15561b2b2792f794c79aa4993fcb8e380aa67adf66fc45a3a167651de8e86
+              tag: 0.0.2
             env:
               RPC_SECRET:
                 valueFrom:
