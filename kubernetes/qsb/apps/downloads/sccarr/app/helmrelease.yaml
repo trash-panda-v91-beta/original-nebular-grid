@@ -57,7 +57,7 @@ spec:
           app:
             image:
               repository: ghcr.io/aka-raccoon/sccarr
-              tag: 0.0.5@sha256:51aae95ccafade86feb2c9b152e9e6167a050d0870b5cca611f900915d236dad
+              tag: 0.0.6
             env:
               ARIA2_URL: http://10.1.1.137
               ARIA2_PORT: 8080
