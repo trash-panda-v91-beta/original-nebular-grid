@@ -38,7 +38,7 @@ spec:
     labels:
       app.kubernetes.io/name: *appname
   interval: 10m
-  path: "./kubernetes/qsb/apps/selfhosted/actual-bank-synchronizer"
+  path: "./kubernetes/qsb/apps/selfhosted/actual/actual-bank-synchronizer"
   prune: true
   sourceRef:
     kind: GitRepository
