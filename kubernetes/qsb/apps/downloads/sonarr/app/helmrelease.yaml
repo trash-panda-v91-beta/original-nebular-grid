@@ -76,6 +76,9 @@ spec:
     service:
       app:
         controller: sonarr
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: 10.1.1.139
         ports:
           http:
             port: *port

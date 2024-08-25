@@ -29,7 +29,7 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
-              - 65542 # gladius:external-services
+              - 65542
 
         containers:
           app:
@@ -47,13 +47,13 @@ spec:
                   secretKeyRef:
                     name: aria2-secret
                     key: sonarr_api_key
-              SONARR_URL: http://10.99.179.154:8989
+              SONARR_URL: http://10.1.1.139:8989
               RADARR_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: aria2-secret
                     key: radarr_api_key
-              RADARR_URL: http://10.103.3.69:7878
+              RADARR_URL: http://10.1.1.138:7878
             resources:
               requests:
                 cpu: 5m
@@ -87,6 +87,9 @@ spec:
     service:
       app:
         controller: aria2
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: 10.1.1.137
         ports:
           http:
             port: 8080
