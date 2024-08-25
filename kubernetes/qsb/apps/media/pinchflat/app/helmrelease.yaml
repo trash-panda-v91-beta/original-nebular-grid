@@ -39,6 +39,7 @@ spec:
               tag: v2024.8.14@sha256:2d4ece7900218aa410301821bd8d2d5ea83f1adae8970d636d7eae01ed9295dc
             env:
               JOURNAL_MODE: delete
+              TZ_DATA_DIR: /tmp/elixir_tz_data
             resources:
               requests:
                 cpu: 14m
