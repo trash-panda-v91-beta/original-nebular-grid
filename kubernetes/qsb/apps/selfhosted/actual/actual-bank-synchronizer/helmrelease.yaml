@@ -40,6 +40,19 @@ spec:
             image:
               repository: ghcr.io/aka-raccoon/actual-bank-synchronizer
               tag: 3.0.0
+            env:
+              DATA_DIR: /data
+              SERVER_URL: http://actual.selfhosted.svc.cluster.local:5006
+              PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: actual-bank-synchronizer-secret
+                    key: password
+              SYNC_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: actual-bank-synchronizer-secret
+                    key: sync_id
             probes:
               liveness:
                 enabled: true
