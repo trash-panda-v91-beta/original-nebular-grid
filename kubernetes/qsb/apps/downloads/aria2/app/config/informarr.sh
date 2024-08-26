@@ -13,6 +13,8 @@ if [ "${NUM_OF_FILES}" -gt 1 ]; then
   exit 1
 fi
 
+echo "Received ${MEDIA_TYPE} file ${FILE} with GID ${GID}"
+
 case "$MEDIA_TYPE" in
 "movie")
   API_KEY="${RADARR_API_KEY}"
@@ -30,6 +32,7 @@ case "$MEDIA_TYPE" in
   ;;
 esac
 
+echo "Sending command to ${URL}/api/v3/command"
 if ! wget \
   --header="Content-Type: application/json" \
   --header="X-Api-Key: $API_KEY" \
@@ -42,6 +45,7 @@ else
   echo "Successfully sent command to ${URL}/api/v3/command"
 fi
 
+echo "Sending command to http://localhost:${RPC_PORT}/jsonrpc"
 if ! wget \
   --post-data="{\"jsonrcp\":\"2.0\",\"id\":\"qwer\",\"method\":\"aria2.removeDownloadResult\",\"params\":[\"token:${RPC_SECRET}\",\"${GID}\"]}" \
   "http://localhost:${RPC_PORT}/jsonrpc" \
