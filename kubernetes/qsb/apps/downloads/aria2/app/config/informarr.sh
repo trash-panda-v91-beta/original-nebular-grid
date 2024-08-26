@@ -44,7 +44,7 @@ fi
 
 if ! wget \
   --post-data="{\"jsonrcp\":\"2.0\",\"id\":\"qwer\",\"method\":\"aria2.removeDownloadResult\",\"params\":[\"token:${RPC_SECRET}\",\"${GID}\"]}" \
-  "http://localhost:6800/jsonrpc" \
+  "http://localhost:${RPC_PORT}/jsonrpc" \
   --output-document=/dev/null -q --tries=1; then
   echo "Failed to send command to http://localhost:6800/jsonrpc"
   exit 1
