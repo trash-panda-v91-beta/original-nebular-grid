@@ -18,7 +18,7 @@ spec:
 
   values:
     controllers:
-      actual-bank-synchronizer:
+      actual:
         annotations:
           reloader.stakater.com/auto: "true"
 
