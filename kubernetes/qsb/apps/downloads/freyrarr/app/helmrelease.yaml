@@ -61,6 +61,7 @@ spec:
               tag: 0.1.1
             env:
               DATA_DIR: /data/nas-media/downloads/freyrarr
+              HOME: /tmp
               LIDARR_URL: http://10.1.1.140
               LIDARR_PORT: 8686
               LIDARR_API_KEY:
@@ -91,13 +92,13 @@ spec:
                 drop: [ALL]
 
     persistence:
-      config:
+      temp:
         enabled: true
         type: emptyDir
         advancedMounts:
           freyrarr:
             app:
-              - path: /.config
+              - path: /tmp
       media:
         type: nfs
         server: asc.internal
