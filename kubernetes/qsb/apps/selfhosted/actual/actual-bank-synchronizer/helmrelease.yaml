@@ -41,7 +41,7 @@ spec:
               repository: ghcr.io/aka-raccoon/actual-bank-synchronizer
               tag: 3.0.0
             env:
-              DATA_DIR: /data
+              DATA_DIR: /tmp
               SERVER_URL: http://actual.selfhosted.svc.cluster.local:5006
               PASSWORD:
                 valueFrom:
@@ -74,3 +74,11 @@ spec:
               readOnlyRootFilesystem: true
               capabilities:
                 drop: [ALL]
+
+    persistence:
+      temp:
+        type: emptyDir
+        advancedMounts:
+          actual-bank-synchronizer:
+            app:
+              - path: /tmp
