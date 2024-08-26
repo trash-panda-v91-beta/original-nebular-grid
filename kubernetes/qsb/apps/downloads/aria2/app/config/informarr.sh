@@ -30,12 +30,24 @@ case "$MEDIA_TYPE" in
   ;;
 esac
 
-curl "${URL}/api/v3/command" -X POST \
-  --fail \
-  --header "Content-Type: Application/JSON" \
-  --header "X-Api-Key: $API_KEY" \
-  --data "{\"name\": \"${COMMAND_NAME}\", \"path\": \"$FILE\"}"
+if ! wget \
+  --header="Content-Type: application/json" \
+  --header="X-Api-Key: $API_KEY" \
+  --post-data="{\"name\": \"${COMMAND_NAME}\", \"path\": \"$FILE\"}" \
+  "${URL}/api/v3/command" \
+  --output-document=/dev/null --q --tries=1; then
+  echo "Failed to send command to ${URL}/api/v3/command"
+  exit 1
+else
+  echo "Successfully sent command to ${URL}/api/v3/command"
+fi
 
-curl "http://localhost:6800/jsonrpc" \
-  --fail \
-  --data "{\"jsonrcp\":\"2.0\",\"id\":\"qwer\",\"method\":\"aria2.removeDownloadResult\",\"params\":[\"token:${RPC_SECRET}\",\"${GID}\"]}"
+if ! wget \
+  --post-data="{\"jsonrcp\":\"2.0\",\"id\":\"qwer\",\"method\":\"aria2.removeDownloadResult\",\"params\":[\"token:${RPC_SECRET}\",\"${GID}\"]}" \
+  "http://localhost:6800/jsonrpc" \
+  --output-document=/dev/null -q --tries=1; then
+  echo "Failed to send command to http://localhost:6800/jsonrpc"
+  exit 1
+else
+  echo "Successfully sent command to http://localhost:6800/jsonrpc"
+fi
