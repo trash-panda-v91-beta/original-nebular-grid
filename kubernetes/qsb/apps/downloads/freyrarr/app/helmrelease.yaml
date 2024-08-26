@@ -95,8 +95,8 @@ spec:
         enabled: true
         type: emptyDir
         advancedMounts:
-          main:
-            freyrarr:
+          freyrarr:
+            app:
               - path: /.config
       media:
         type: nfs
