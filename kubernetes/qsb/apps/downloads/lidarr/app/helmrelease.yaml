@@ -74,6 +74,9 @@ spec:
     service:
       app:
         controller: lidarr
+        type: LoadBalancer
+        annotations:
+          io.cilium/lb-ipam-ips: 10.1.1.140
         ports:
           http:
             port: *port
