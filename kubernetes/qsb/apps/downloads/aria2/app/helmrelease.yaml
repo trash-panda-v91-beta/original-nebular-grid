@@ -79,7 +79,7 @@ spec:
               FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
             envFrom:
               - secretRef:
-                  name: sabnzbd-vpn-secret
+                  name: aria2-vpn-secret
             securityContext:
               capabilities:
                 add: [NET_ADMIN]
