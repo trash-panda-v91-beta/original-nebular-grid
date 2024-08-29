@@ -36,7 +36,7 @@ spec:
               tag: 1.4.7
             env:
               LOG_LEVEL: INFO
-              MQTT_IGNORED_TOPICS:
+              MQTT_IGNORED_TOPICS: bulb*
               MQTT_ADDRESS: mosquitto.home-automation.svc.cluster.local
               MQTT_PORT: 1883
               MQTT_TOPIC: "zigbee2mqtt/#"
@@ -87,5 +87,5 @@ spec:
               - sourceLabels:
                   - topic
                 targetLabel: topic
-                regex: 'zigbee2mqtt_(.*)'
-                replacement: '$1'
+                regex: "zigbee2mqtt_(.*)"
+                replacement: "$1"
