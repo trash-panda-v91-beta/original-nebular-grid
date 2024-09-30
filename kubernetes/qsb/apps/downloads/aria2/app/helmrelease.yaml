@@ -43,6 +43,7 @@ spec:
             envFrom:
               - secretRef:
                   name: aria2-vpn-secret
+            restartPolicy: Always
             securityContext:
               capabilities:
                 add: [NET_ADMIN]
