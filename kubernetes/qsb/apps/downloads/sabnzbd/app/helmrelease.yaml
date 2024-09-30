@@ -28,6 +28,25 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups:
               - 65542
+        initContainers:
+          gluetun:
+            image:
+              repository: ghcr.io/qdm12/gluetun
+              tag: v3.39.0
+            env:
+              DNS_KEEP_NAMESERVER: on
+              VPN_SERVICE_PROVIDER: custom
+              VPN_TYPE: wireguard
+              FIREWALL_INPUT_PORTS: *port
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-vpn-secret
+            securityContext:
+              capabilities:
+                add:
+                  - NET_ADMIN
+              allowPrivilegeEscalation: false
 
         containers:
           app:
@@ -79,23 +98,6 @@ spec:
                 drop:
                   - ALL
 
-          gluetun:
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.39.0
-            env:
-              VPN_SERVICE_PROVIDER: custom
-              VPN_TYPE: wireguard
-              FIREWALL_INPUT_PORTS: *port
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
-            envFrom:
-              - secretRef:
-                  name: sabnzbd-vpn-secret
-            securityContext:
-              capabilities:
-                add:
-                  - NET_ADMIN
-              allowPrivilegeEscalation: false
 
     service:
       app:
