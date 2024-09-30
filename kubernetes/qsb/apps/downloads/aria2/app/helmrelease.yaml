@@ -36,7 +36,6 @@ spec:
               repository: ghcr.io/qdm12/gluetun
               tag: v3.39.0
             env:
-              DNS_KEEP_NAMESERVER: on
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard
               FIREWALL_INPUT_PORTS: 8080

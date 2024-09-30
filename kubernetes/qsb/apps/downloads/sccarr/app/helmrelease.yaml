@@ -41,7 +41,6 @@ spec:
               repository: ghcr.io/qdm12/gluetun
               tag: v3.39.1
             env:
-              DNS_KEEP_NAMESERVER: on
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard
               FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
