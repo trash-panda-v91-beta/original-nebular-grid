@@ -35,23 +35,23 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups: [65542]
 
-        initContainers:
-          gluetun:
-            image:
-              repository: ghcr.io/qdm12/gluetun
-              tag: v3.39.1
-            env:
-              VPN_SERVICE_PROVIDER: custom
-              VPN_TYPE: wireguard
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
-            envFrom:
-              - secretRef:
-                  name: sccarr-vpn-secret
-            restartPolicy: Always
-            securityContext:
-              capabilities:
-                add: [NET_ADMIN]
-              allowPrivilegeEscalation: false
+        # initContainers:
+        # gluetun:
+        #   image:
+        #     repository: ghcr.io/qdm12/gluetun
+        #     tag: v3.39.1
+        #   env:
+        #     VPN_SERVICE_PROVIDER: custom
+        #     VPN_TYPE: wireguard
+        #     FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+        #   envFrom:
+        #     - secretRef:
+        #         name: sccarr-vpn-secret
+        #   restartPolicy: Always
+        #   securityContext:
+        #     capabilities:
+        #       add: [NET_ADMIN]
+        #     allowPrivilegeEscalation: false
 
         containers:
           app:
