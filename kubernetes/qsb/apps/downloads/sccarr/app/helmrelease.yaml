@@ -15,18 +15,14 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       sccarr:
         type: cronjob
-
         annotations:
           reloader.stakater.com/auto: "true"
-
         cronjob:
           schedule: 5 * * * *
-
         pod:
           imagePullSecrets:
             - name: private-ghcr
@@ -34,7 +30,6 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
             supplementalGroups: [65542]
-
         initContainers:
           gluetun:
             image:
@@ -43,7 +38,7 @@ spec:
             env:
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
             envFrom:
               - secretRef:
                   name: sccarr-vpn-secret
@@ -52,12 +47,11 @@ spec:
               capabilities:
                 add: [NET_ADMIN]
               allowPrivilegeEscalation: false
-
         containers:
           app:
             image:
               repository: ghcr.io/aka-raccoon/sccarr
-              tag: 0.0.6
+              tag: 0.0.7
             env:
               ARIA2_URL: http://10.1.1.137
               ARIA2_PORT: 8080
