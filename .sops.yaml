@@ -1,27 +1,27 @@
 ---
 keys:
   - &user_aka-raccoon age1qr30xfa47s84mcdcsp0h69x7ryflckmc20reyezc9wfysleeydvqc2v2y3
+  - &user_trash-panda-v91-beta age1k2f79x0m9lcu7x2vyemph9m5rrgezfy3kgl0gz7zjwuuwrhnfy0slpn0d6
   - &host_flux age1vx9xymjgckm2rvzmkdpd6lm2dchm2lytcfguc0de82flmv8323hsgdw9pv
-
 creation_rules:
   - path_regex: kubernetes/.*/talos/.*\.sops\.ya?ml$
     key_groups:
       - age:
           - *user_aka-raccoon
+          - *user_trash-panda-v91-beta
           - *host_flux
-
   - path_regex: kubernetes/.*\.sops\.ya?ml$
     encrypted_regex: "^(data|stringData)$"
     key_groups:
       - age:
           - *user_aka-raccoon
+          - *user_trash-panda-v91-beta
           - *host_flux
-
   - path_regex: .*\.sops\.ya?ml$
     key_groups:
       - age:
           - *user_aka-raccoon
-
+          - *user_trash-panda-v91-beta
 stores:
   yaml:
     indent: 2
