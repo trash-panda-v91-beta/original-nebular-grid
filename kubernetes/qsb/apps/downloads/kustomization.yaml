@@ -12,7 +12,5 @@ resources:
   - ./recyclarr/ks.yaml
   - ./sabnzbd/ks.yaml
   - ./sonarr/ks.yaml
-  - ./lidarr/ks.yaml
-  - ./freyrarr/ks.yaml
   - ./aria2/ks.yaml
   - ./sccarr/ks.yaml
