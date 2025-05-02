@@ -10,3 +10,4 @@ resources:
   - ./atuin/ks.yaml
   - ./paperless/ks.yaml
   - ./radicale/ks.yaml
+  - ./silverbullet/ks.yaml
