@@ -11,3 +11,4 @@ resources:
   - ./paperless/ks.yaml
   - ./radicale/ks.yaml
   - ./silverbullet/ks.yaml
+  - ./soft-serve/ks.yaml
