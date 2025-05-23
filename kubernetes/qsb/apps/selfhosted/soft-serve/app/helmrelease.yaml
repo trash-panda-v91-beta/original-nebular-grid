@@ -36,7 +36,7 @@ spec:
               SOFT_SERVE_NAME: "Nebular Grid"
               SOFT_SERVE_LOG_FORMAT: "json"
               SOFT_SERVE_SSH_LISTEN_ADDR: ":23231"
-              SOFT_SERVE_SSH_PUBLIC_URL: "ssh://soft-serve.${DOMAIN}:22"
+              SOFT_SERVE_SSH_PUBLIC_URL: "ssh://git.${DOMAIN}:23231"
               SOFT_SERVE_GIT_LISTEN_ADDR: ":9418"
               SOFT_SERVE_HTTP_LISTEN_ADDR: ":23232"
               SOFT_SERVE_HTTP_PUBLIC_URL: "https://soft-serve.${DOMAIN}"
@@ -66,16 +66,14 @@ spec:
         controller: soft-serve
         ports:
           http:
-            port: 443
+            port: 23232
           ssh:
             enabled: true
-            port: 22
-            targetPort: 23231
+            port: 23231
             protocol: TCP
           git:
             enabled: true
             port: 9418
-            targetPort: 9418
             protocol: TCP
     ingress:
       app:
@@ -94,7 +92,7 @@ spec:
               - path: /
                 service:
                   identifier: app
-                  port: git
+                  port: ssh
     persistence:
       data:
         existingClaim: soft-serve-data
