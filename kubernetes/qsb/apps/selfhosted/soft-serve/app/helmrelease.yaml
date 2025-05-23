@@ -39,7 +39,7 @@ spec:
               SOFT_SERVE_SSH_PUBLIC_URL: "ssh://git.${DOMAIN}:22"
               SOFT_SERVE_GIT_LISTEN_ADDR: ":9418"
               SOFT_SERVE_HTTP_LISTEN_ADDR: ":23232"
-              SOFT_SERVE_HTTP_PUBLIC_URL: "https://soft-serve.${DOMAIN}"
+              SOFT_SERVE_HTTP_PUBLIC_URL: "https://git.${DOMAIN}"
               SOFT_SERVE_STATS_LISTEN_ADDR: ":23233"
               SOFT_SERVE_LFS_ENABLED: "true"
               SOFT_SERVE_LFS_SSH_ENABLED: "true"
