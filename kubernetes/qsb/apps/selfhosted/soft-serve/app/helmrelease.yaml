@@ -95,3 +95,10 @@ spec:
                 service:
                   identifier: app
                   port: git
+    persistence:
+      data:
+        existingClaim: soft-serve-data
+        advancedMounts:
+          soft-serve:
+            app:
+              - path: /soft-serve
