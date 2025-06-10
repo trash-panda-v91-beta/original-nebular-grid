@@ -13,4 +13,3 @@ resources:
   - ./sabnzbd/ks.yaml
   - ./sonarr/ks.yaml
   - ./aria2/ks.yaml
-  - ./sccarr/ks.yaml
