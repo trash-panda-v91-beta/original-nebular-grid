@@ -7,8 +7,5 @@ resources:
   - ./namespace.yaml
   # Flux-Kustomizations
   - ./actual/ks.yaml
-  - ./atuin/ks.yaml
   - ./paperless/ks.yaml
-  - ./radicale/ks.yaml
-  - ./silverbullet/ks.yaml
   - ./soft-serve/ks.yaml
