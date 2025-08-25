@@ -113,6 +113,6 @@ spec:
       recs:
         type: nfs
         server: asc.internal
-        path: /tank/apps/scrypted
+        path: /mnt/tank/apps/scrypted
         globalMounts:
           - path: /recs

@@ -86,6 +86,6 @@ spec:
       media:
         type: nfs
         server: asc.internal
-        path: /tank/media/downloads/pinchflat
+        path: /mnt/tank/media/downloads/pinchflat
         globalMounts:
           - path: /downloads

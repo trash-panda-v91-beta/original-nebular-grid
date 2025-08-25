@@ -120,7 +120,7 @@ spec:
       media:
         type: nfs
         server: asc.internal
-        path: /tank/media
+        path: /mnt/tank/media
         globalMounts:
           - path: /data/nas-media
       config-file:
