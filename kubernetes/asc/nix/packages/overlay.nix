@@ -1,3 +1,0 @@
-{ inputs, system, ... }:
-final: prev:
-{ }
