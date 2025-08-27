@@ -20,7 +20,6 @@ spec:
       plex:
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           nodeSelector:
             intel.feature.node.kubernetes.io/gpu: "true"
@@ -32,13 +31,12 @@ spec:
             supplementalGroups:
               - 44
               - 109
-              - 65542 # gladius:external-services
-
+              - 65542  # gladius:external-services
         containers:
           app:
             image:
-              repository: ghcr.io/onedr0p/plex
-              tag: 1.40.5.8854-f36c552fd@sha256:b9c296227e318d81b62873aebfb25ba78685b65546e47a4840d31dd501504f1c
+              repository: ghcr.io/home-operations/plex
+              tag: 1.42.1.10060
             env:
               PLEX_ADVERTISE_URL: https://10.1.1.136:32400,https://plex.${DOMAIN}:443
               PLEX_NO_AUTH_NETWORKS: 10.244.0.0/16
@@ -60,7 +58,6 @@ spec:
               limits:
                 gpu.intel.com/i915: 1
                 memory: 9248M
-
     service:
       app:
         controller: plex
@@ -70,7 +67,6 @@ spec:
         ports:
           http:
             port: 32400
-
     ingress:
       app:
         annotations:
@@ -84,7 +80,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         existingClaim: plex-config
