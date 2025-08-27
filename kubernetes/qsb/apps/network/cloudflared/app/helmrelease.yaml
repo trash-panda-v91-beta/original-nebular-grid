@@ -15,16 +15,13 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       cloudflared:
         replicas: 2
         strategy: RollingUpdate
-
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           topologySpreadConstraints:
             - maxSkew: 1
@@ -33,12 +30,11 @@ spec:
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: cloudflared
-
         containers:
           app:
             image:
               repository: docker.io/cloudflare/cloudflared
-              tag: 2024.8.3
+              tag: 2025.8.1
             args:
               - tunnel
               - --config
@@ -93,14 +89,12 @@ spec:
                 memory: 105Mi
               limits:
                 memory: 105Mi
-
     service:
       app:
         controller: cloudflared
         ports:
           http:
             port: 8080
-
     serviceMonitor:
       app:
         serviceName: cloudflared
@@ -110,7 +104,6 @@ spec:
             path: /metrics
             interval: 1m
             scrapeTimeout: 30s
-
     persistence:
       config:
         type: configMap
