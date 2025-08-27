@@ -15,13 +15,11 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       sonarr:
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           securityContext:
             runAsUser: 2000
@@ -30,13 +28,12 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
-              - 65542 # gladius:external-services
-
+              - 65542  # gladius:external-services
         containers:
           app:
             image:
-              repository: ghcr.io/onedr0p/sonarr-develop
-              tag: 4.0.8.2208@sha256:901204d1b85a07938c3e892de2676184716e577fea6622befecef3090d2e5465
+              repository: ghcr.io/home-operations/sonarr
+              tag: 4.0.15.2940
             env:
               COMPlus_EnableDiagnostics: "0"
               SONARR__APP__INSTANCENAME: Sonarr
@@ -72,7 +69,6 @@ spec:
               capabilities:
                 drop:
                   - ALL
-
     service:
       app:
         controller: sonarr
@@ -82,7 +78,6 @@ spec:
         ports:
           http:
             port: *port
-
     ingress:
       app:
         className: "internal-nginx"
@@ -95,7 +90,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         existingClaim: sonarr-config

@@ -15,13 +15,11 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       prowlarr:
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           securityContext:
             runAsUser: 2000
@@ -29,20 +27,20 @@ spec:
             runAsNonRoot: true
             fsGroup: 2000
             fsGroupChangePolicy: OnRootMismatch
-
         containers:
           app:
             image:
-              repository: ghcr.io/onedr0p/prowlarr-nightly
-              tag: 1.21.2.4648@sha256:1cb047a17519c87e015b2585d1bdf0234ef35f1eb0addf13d4ad92d4db858700
+              repository: ghcr.io/home-operations/prowlarr
+              tag: 2.0.5.5160
             env:
-              COMPlus_EnableDiagnostics: "0"
-              PROWLARR__INSTANCE_NAME: Prowlarr
-              PROWLARR__PORT: &port 9696
-              PROWLARR__LOG_LEVEL: info
+              PROWLARR__APP__INSTANCENAME: Prowlarr
+              PROWLARR__SERVER__PORT: &port 9696
               PROWLARR__ANALYTICS_ENABLED: "False"
-              PROWLARR__AUTHENTICATION_METHOD: External
-              PROWLARR__API_KEY:
+              PROWLARR__UPDATE__BRANCH: develop
+              PROWLARR__LOG__DBENABLED: "False"
+              PROWLARR__LOG__LEVEL: info
+              PROWLARR__AUTH__METHOD: External
+              PROWLARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
                     name: prowlarr-secret
@@ -69,14 +67,12 @@ spec:
               capabilities:
                 drop:
                   - ALL
-
     service:
       app:
         controller: prowlarr
         ports:
           http:
             port: *port
-
     ingress:
       app:
         className: "internal-nginx"
@@ -89,7 +85,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         existingClaim: prowlarr-config

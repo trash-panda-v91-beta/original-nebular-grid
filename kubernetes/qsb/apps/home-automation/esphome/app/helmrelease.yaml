@@ -35,8 +35,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/esphome/esphome
-              tag: 2024.7.3
+              repository: ghcr.io/home-operations/esphome
+              tag: 2025.8.1@sha256:b3dff4ee890c375cb3def244f06bc542dc22f4246523c2e526d32a9afbe67b35
             probes:
               liveness:
                 enabled: false

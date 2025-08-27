@@ -15,13 +15,11 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   values:
     controllers:
       sabnzbd:
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           securityContext:
             fsGroup: 2000
@@ -32,12 +30,12 @@ spec:
           gluetun:
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: v3.39.0
+              tag: v3.40.0
             env:
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard
               FIREWALL_INPUT_PORTS: 8080
-              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+              FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
             envFrom:
               - secretRef:
                   name: sabnzbd-vpn-secret
@@ -47,21 +45,16 @@ spec:
                 add:
                   - NET_ADMIN
               allowPrivilegeEscalation: false
-
         containers:
           app:
             image:
-              repository: ghcr.io/onedr0p/sabnzbd
-              tag: 4.3.2@sha256:b23a4ecc680470e88fc04a6dc27097f4da68adcf9d1ad0d6407bab7010fefade
+              repository: ghcr.io/home-operations/sabnzbd
+              tag: 4.5.3
             env:
               SABNZBD__PORT: &port 8080
               SABNZBD__HOST_WHITELIST_ENTRIES: >-
-                sabnzbd,
-                sabnzbd.downloads,
-                sabnzbd.downloads.svc,
-                sabnzbd.downloads.svc.cluster,
-                sabnzbd.downloads.svc.cluster.local,
-                sabnzbd.${DOMAIN}
+                sabnzbd, sabnzbd.downloads, sabnzbd.downloads.svc, sabnzbd.downloads.svc.cluster,
+                sabnzbd.downloads.svc.cluster.local, sabnzbd.${DOMAIN}
               SABNZBD__API_KEY:
                 valueFrom:
                   secretKeyRef:
@@ -97,14 +90,12 @@ spec:
               capabilities:
                 drop:
                   - ALL
-
     service:
       app:
         controller: sabnzbd
         ports:
           http:
             port: *port
-
     ingress:
       app:
         className: "internal-nginx"
@@ -117,7 +108,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         existingClaim: sabnzbd-config
