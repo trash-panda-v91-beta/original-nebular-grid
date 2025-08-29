@@ -72,9 +72,6 @@ spec:
     service:
       app:
         controller: radarr
-        type: LoadBalancer
-        annotations:
-          io.cilium/lb-ipam-ips: 10.1.1.138
         ports:
           http:
             port: *port

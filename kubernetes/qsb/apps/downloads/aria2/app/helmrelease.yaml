@@ -96,13 +96,13 @@ spec:
                   secretKeyRef:
                     name: aria2-secret
                     key: sonarr_api_key
-              SONARR_URL: http://10.1.1.139:8989
+              SONARR_URL: sonarr.downloads.svc.cluster.local:8989
               RADARR_API_KEY:
                 valueFrom:
                   secretKeyRef:
                     name: aria2-secret
                     key: radarr_api_key
-              RADARR_URL: http://10.1.1.138:7878
+              RADARR_URL: radarr.downloads.svc.cluster.local:7878
             resources:
               requests:
                 cpu: 5m
