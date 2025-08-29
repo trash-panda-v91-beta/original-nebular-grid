@@ -7,7 +7,7 @@ resources:
   - ../../../../templates/volsync
 configMapGenerator:
   - name: aria2-configmap
-    files: [config/aria2.conf, config/informarr.sh]
+    files: [config/aria2.conf, config/informarr.sh, config/dnsdist.conf]
   - name: aria2-informarr
     files: [config/informarr.sh]
 generatorOptions:
