@@ -27,24 +27,56 @@ spec:
             supplementalGroups:
               - 65542
         initContainers:
+          dnsdist:
+            image:
+              repository: docker.io/powerdns/dnsdist-19
+              tag: 1.9.10@sha256:7495affd85c450050eb2fce1cb99964cb439482ffada22e9d312a761b6bf138d
+            restartPolicy: Always
           gluetun:
+            dependsOn:
+              - dnsdist
             image:
               repository: ghcr.io/qdm12/gluetun
-              tag: v3.40.0
+              tag: v3.40.0@sha256:2b42bfa046757145a5155acece417b65b4443c8033fb88661a8e9dcf7fda5a00
+            restartPolicy: Always
             env:
-              VPN_SERVICE_PROVIDER: custom
+              DOT: "off"
+              DNS_ADDRESS: 127.0.0.2
+              VPN_SERVICE_PROVIDER: nordvpn
               VPN_TYPE: wireguard
-              FIREWALL_INPUT_PORTS: 8080
+              SERVER_COUNTRIES: "Netherlands,Germany,Czech Republic,Slovakia"
+              FIREWALL_INPUT_PORTS: "8080,9999"
+              HEALTH_SERVER_ADDRESS: ":9999"
               FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16  # Allow access to k8s subnets
             envFrom:
               - secretRef:
                   name: sabnzbd-vpn-secret
-            restartPolicy: Always
+            lifecycle:
+              postStart:
+                exec:
+                  command: ["/bin/sh", "-c", "(ip rule del table 51820; ip -6 rule
+                      del table 51820) || true"]
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /check
+                    port: 9999
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /check
+                    port: 9999
+                  initialDelaySeconds: 10
             securityContext:
               capabilities:
-                add:
-                  - NET_ADMIN
-              allowPrivilegeEscalation: false
+                add: [NET_ADMIN]
+                allowPrivilegeEscalation: false
         containers:
           app:
             image:
@@ -144,3 +176,12 @@ spec:
             app:
               - path: /incomplete
                 subPath: incomplete
+      dnsdist:
+        type: configMap
+        name: sabnzbd-configmap
+        advancedMounts:
+          sabnzbd:
+            dnsdist:
+              - path: /etc/dnsdist/dnsdist.conf
+                subPath: dnsdist.conf
+                readOnly: true
