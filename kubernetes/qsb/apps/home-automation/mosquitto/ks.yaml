@@ -20,9 +20,8 @@ spec:
   dependsOn:
     - name: rook-ceph-cluster
     - name: volsync
-    - name: external-secrets-stores
   postBuild:
     substitute:
       APP: *appname
-      VOLSYNC_CLAIM: mosquitto-data
+      VOLSYNC_CLAIM: mosquitto-cache
       VOLSYNC_CAPACITY: 512Mi
