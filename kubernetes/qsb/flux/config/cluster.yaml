@@ -9,7 +9,7 @@ spec:
   interval: 30m
   ref:
     branch: main
-  url: https://github.com/aka-raccoon/nebular-grid.git
+  url: https://github.com/trash-panda-v91-beta/original-nebular-grid.git
   ignore: |
     # exclude all
     /*
